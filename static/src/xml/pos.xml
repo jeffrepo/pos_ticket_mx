@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+  <t t-extend="OrderReceipt">
+
+    <t t-jquery=".pos-receipt" t-operation="replace">
+      <br/>
+      <div class="pos-receipt">
+        <t t-if="receipt.company.logo">
+          <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
+        </t>
+
+        <table style="width:100%;">
+          <tr>
+            <th style="color:black;">Factura</th>
+            <td></td>
+            <div class="pos-receipt-order-data">
+              <th style="font-size: 11px;" t-esc="receipt.name"></th>
+            </div>
+          </tr>
+          <tr style="height:10px;">
+            <div class="pos-receipt-order-data">
+              <td style="font-size: 11px;" t-esc="receipt.date.localestring"></td>
+            </div>
+            <td></td>
+            <th style="color:black; font-size: 13px;">USO CFDI:</th>
+          </tr>
+
+          <tr>
+            <th style="color:black; height:50" colspan="3" align="center"></th>
+          </tr>
+
+          <div class="pos-receipt-amount">
+
+            <tr style="height:50">
+              <td style="color:black; height:0.20cms; font-size: 13px;"><span t-esc="widget.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
+              <td></td>
+              <td></td>
+            </tr>
+
+          </div>
+
+          <tr>
+            <th style="color:black; height:50" colspan="3" align="center"></th>
+          </tr>
+
+          <tr style="height:35px;">
+            <th colspan="2" style="color:black; font-size: 13px;">CERTIFICADO CFDI:</th>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="color:black; font-size: 13px;">Receptor:</th>
+          </tr>
+          <br></br>
+          <tr style="height:15px;">
+            <td style="color:black; font-size: 11px;"><span t-esc="receipt.client"/></td>
+          </tr>
+
+          <tr style="height:20px;">
+            <td style="font-size: 11px;"><span t-esc="vat"/></td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="color:black; font-size: 13px;">EMISOR:</th>
+          </tr>
+          <div class="pos-receipt-contact">
+            <tr style="height:15px;">
+              <t t-if="receipt.company.vat">
+                <td style="font-size: 11px;" colspan="2" t-esc="receipt.company.name"></td>
+              </t>
+            </tr>
+            <tr style="height:20px;">
+              <t t-if="receipt.company.vat">
+                <td style="font-size: 11px;" colspan="2" t-esc="receipt.company.vat"></td>
+              </t>
+            </tr>
+          </div>
+
+          <tr style="height:35px;">
+            <th style="color:black; font-size: 13px;" colspan="2">Expedido en:</th>
+          </tr>
+          <br></br>
+          <tr>
+            <th style="color:black; height:0.30cms" colspan="4" align="center"></th>
+          </tr>
+
+        </table>
+
+        <table style="width:100%;">
+
+          <tr>
+            <th style="color:black; font-size: 12px;">Cantidad</th>
+            <th style="color:black; font-size: 12px;" align="center">Descripción</th>
+            <th style="color:black; font-size: 12px;" align="center">Precio</th>
+            <th style="color:black; font-size: 12px;">Importe</th>
+          </tr>
+
+          <tr>
+            <th style="color:black; height:0.30cms" colspan="4" align="center"><hr></hr></th>
+          </tr>
+
+          <tr t-foreach="order.get_orderlines()" t-as="l">
+            <t t-if="producto_descuento_id != l.product.id">
+              <td style="font-size: 10px;" align="center"><span t-esc="l.get_quantity()"/></td>
+              <td style="font-size: 10px;"><span t-esc="l.product.display_name"/></td>
+              <td style="font-size: 10px;" align="right"><span t-esc="l.get_unit_price().toFixed(2)" /></td>
+              <td style="font-size: 10px;" align="right"><span t-esc="(l.get_quantity()*l.get_unit_price()).toFixed(2)" /></td>
+            </t>
+          </tr>
+
+          <tr>
+            <th style="color:black; height:0.20cms" colspan="4" align="center"><hr></hr></th>
+          </tr>
+
+        </table>
+
+        <table style="width:100%;">
+
+          <tr>
+            <td style="width:100px;" rowspan="10" colspan="2">
+              <div id="qrcode"></div>
+                <script type="text/javascript">
+                  var qr_string = "<t t-esc="qr_string"/>";
+                  new QRCode(document.getElementById("qrcode"), qr_string);
+                </script>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td style="color:black; font-size:10px;">  DESCUENTO:</td>
+            <t style="font-size: 10px;" t-foreach="order.get_orderlines()" t-as="l">
+              <t t-if="l.product.id == producto_descuento_id">
+                <td style="font-size:10px;" align="right"><span t-esc="l.get_unit_price()"/></td>
+              </t>
+            </t>
+          </tr>
+
+          <tr>
+            <td></td>
+            <td style="color:black; font-size: 10px;">  SUBTOTAL: </td>
+            <td style="font-size: 10px;" align="right"><span t-esc="receipt.total_without_tax"/></td>
+          </tr>
+
+          <tr>
+            <td></td>
+            <td style="color:black; font-size: 10px;">  I.V.A. 16%: </td>
+            <td style="font-size: 10px;" align="right"><span t-esc="receipt.total_tax"/></td>
+          </tr>
+
+          <tr>
+            <td></td>
+            <td colspan="2"><hr></hr></td>
+          </tr>
+
+          <tr>
+            <td></td>
+            <td style="color:black; font-size: 10px;">  TOTAL: </td>
+            <div class="pos-receipt-amount">
+              <td style="color:black; font-size: 10px;" align="right"><span t-esc="widget.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
+            </div>
+          </tr>
+
+          <tr>
+            <td style="font-color:white; font-size: 10px; color:#FDFEFE; font:white;"> <FONT COLOR="white"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]></FONT></td>
+            <td style="font-size: 10px;">Tipo de pago: </td>
+          </tr>
+
+          <tr t-foreach="paymentlines" t-as="line">
+            <td></td>
+            <td style="font-size: 10px;" t-esc="line.name">  </td>
+          </tr>
+
+        </table>
+
+        <table style="width:100%;">
+          <tr style="height:35px;">
+            <td style="color:black; font-size: 13px;" colspan="2" align="center"><span t-esc="receipt.datos_certificacion.total_string"/></td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="font-size: 12px; color:black;">Régimen fiscal: </th>
+          </tr>
+
+          <tr>
+            <td style="font-size: 12px;" colspan="2"><span t-esc="receipt.datos_certificacion.regimen_fiscal"/> Régimen general de ley personas morales</td>
+            <!-- <td style="font-size: 12px;" align="left">Régimen general de ley personas morales</td> -->
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="font-size: 12px; color:black;">CERTIFICADO SAT: </th>
+            <td style="font-size: 12px;" align="left"><span t-esc="certificado_sat"/></td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="font-size: 11px; color:black;">FECHA CERTIFICACIÓN: </th>
+            <td style="font-size: 11px;" align="left"><span t-esc="fecha_certificacion"/></td>
+          </tr>
+
+          <tr>
+            <td style="font-size: 10px;"></td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="font-size: 12px; color:black;">FOLIO FISCAL: </th>
+          </tr>
+
+          <tr>
+            <td style="font-size: 11px;" colspan="2"><span t-esc="folio_fiscal"/></td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="color:black; font-size: 12px;">CADENA ORIGINAL: </th>
+          </tr>
+
+          <tr style="height:80px; Word-break:break-all;">
+            <td style="font-size: 10px; Word-break:break-all;" colspan="2">
+              <div class="digital-stamp-content">
+                <span t-esc="receipt.datos_certificacion.cadena_original"/>
+              </div>
+            </td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="color:black; font-size: 12px;">SELLO SAT: </th>
+          </tr>
+
+          <tr style="height:80px; Word-break:break-all;">
+            <td style="font-size: 10px; Word-break:break-all;" colspan="2">
+              <div class="digital-stamp-content">
+                <span t-esc="receipt.datos_certificacion.sello_sat"/>
+              </div>
+            </td>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="color:black; font-size: 12px;" colspan="2">SELLO DIGITAL DEL CFDI: </th>
+          </tr>
+
+          <tr style="height:80px; Word-break:break-all;">
+            <td style="font-size: 10px; Word-break:break-all;" colspan="2">
+              <span t-esc="receipt.datos_certificacion.sello_digital_emisor"/>
+            </td>
+          </tr>
+
+          <tr style="height:70px;">
+            <th style="font-size: 10px;" align="center" colspan="2"></th>
+          </tr>
+
+          <tr style="height:35px;">
+            <th style="font-size: 10px;" align="center" colspan="2">Este documento es una representacion impresa de un CFDI, los datos que no se muestran, estan contenidos en el XML </th>
+          </tr>
+
+
+        </table>
+
+      </div>
+    </t>
+
+
+  </t>
+
+</templates>
