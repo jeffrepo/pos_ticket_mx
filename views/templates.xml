@@ -8,8 +8,8 @@
           </xpath>
 
           <xpath expr="." position="inside">
-              <!-- <script type="text/javascript" src="/pos_ticket_mx/static/src/js/qrcode.js"></script> -->
-              <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+              <script type="text/javascript" src="/pos_ticket_mx/static/src/js/qrcode.js"></script>
+              <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script> -->
               <script type="text/javascript" src="/pos_ticket_mx/static/src/js/screens.js"></script>
           </xpath>
         </template>

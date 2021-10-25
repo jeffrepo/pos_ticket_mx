@@ -57,7 +57,9 @@
           </tr>
 
           <tr style="height:20px;">
-            <td style="font-size: 11px;"><span t-esc="vat"/></td>
+            <t t-if="vat">
+              <td style="font-size: 11px;"><span t-esc="vat"/></td>
+            </t>
           </tr>
 
           <tr style="height:35px;">
@@ -96,7 +98,7 @@
           </tr>
 
           <tr>
-            <th style="color:black; height:0.30cms" colspan="4" align="center"><hr></hr></th>
+            <th style="color:black; height:0.30cms" colspan="4" align="center"><hr size="4px" color="black"></hr></th>
           </tr>
 
           <tr t-foreach="order.get_orderlines()" t-as="l">
@@ -114,17 +116,21 @@
 
         </table>
 
-        <table style="width:100%;">
+        <table style="width:100%;" >
+          <t t-if="'datos_certificacion' in receipt">
+            <t t-if="vat || folio_fiscal || certificado_sat || receipt.datos_certificacion.sello_sat">
+              <tr>
+                <td style="width:100px;" rowspan="10" colspan="2">
+                  <div id="qrcode"></div>
+                  <script type="text/javascript">
+                    var qr_string = "<t t-esc="qr_string"/>";
+                    new QRCode(document.getElementById("qrcode"), qr_string);
+                  </script>
+                </td>
+              </tr>
+            </t>
+          </t>
 
-          <tr>
-            <td style="width:100px;" rowspan="10" colspan="2">
-              <div id="qrcode"></div>
-                <script type="text/javascript">
-                  var qr_string = "<t t-esc="qr_string"/>";
-                  new QRCode(document.getElementById("qrcode"), qr_string);
-                </script>
-            </td>
-          </tr>
           <tr>
             <td></td>
             <td style="color:black; font-size:10px;">  DESCUENTO:</td>
@@ -173,74 +179,106 @@
         </table>
 
         <table style="width:100%;">
+
           <tr style="height:35px;">
-            <td style="color:black; font-size: 13px;" colspan="2" align="center"><span t-esc="receipt.datos_certificacion.total_string"/></td>
+            <t t-if="total_letras">
+              <td ></td>
+            </t>
           </tr>
 
           <tr style="height:35px;">
-            <th style="font-size: 12px; color:black;">Régimen fiscal: </th>
+            <t t-if="total_letras">
+              <td style="color:black; font-size: 13px;" colspan="2" align="center"><span t-esc="total_letras"/></td>
+            </t>
           </tr>
 
-          <tr>
-            <td style="font-size: 12px;" colspan="2"><span t-esc="receipt.datos_certificacion.regimen_fiscal"/> Régimen general de ley personas morales</td>
-            <!-- <td style="font-size: 12px;" align="left">Régimen general de ley personas morales</td> -->
-          </tr>
+          <t t-if="'datos_certificacion' in receipt">
+            <t t-if="receipt.datos_certificacion.regimen_fiscal">
+              <tr style="height:35px;">
+                <th style="font-size: 12px; color:black;">Régimen fiscal: </th>
+              </tr>
 
-          <tr style="height:35px;">
-            <th style="font-size: 12px; color:black;">CERTIFICADO SAT: </th>
-            <td style="font-size: 12px;" align="left"><span t-esc="certificado_sat"/></td>
-          </tr>
+              <tr>
+                <td style="font-size: 12px;" colspan="2"><span t-esc="receipt.datos_certificacion.regimen_fiscal"/> Régimen general de ley personas morales</td>
+                <!-- <td style="font-size: 12px;" align="left">Régimen general de ley personas morales</td> -->
+              </tr>
+            </t>
+          </t>
 
-          <tr style="height:35px;">
-            <th style="font-size: 11px; color:black;">FECHA CERTIFICACIÓN: </th>
-            <td style="font-size: 11px;" align="left"><span t-esc="fecha_certificacion"/></td>
-          </tr>
+          <t t-if="certificado_sat">
+            <tr style="height:35px;">
+              <th style="font-size: 12px; color:black;">CERTIFICADO SAT: </th>
+              <td style="font-size: 12px;" align="left"><span t-esc="certificado_sat"/></td>
+            </tr>
+          </t>
+
+          <t t-if="fecha_certificacion">
+            <tr style="height:35px;">
+              <th style="font-size: 11px; color:black;">FECHA CERTIFICACIÓN: </th>
+              <td style="font-size: 11px;" align="left"><span t-esc="fecha_certificacion"/></td>
+            </tr>
+          </t>
 
           <tr>
             <td style="font-size: 10px;"></td>
           </tr>
 
-          <tr style="height:35px;">
-            <th style="font-size: 12px; color:black;">FOLIO FISCAL: </th>
-          </tr>
+          <t t-if="folio_fiscal">
+            <tr style="height:35px;">
+              <th style="font-size: 12px; color:black;">FOLIO FISCAL: </th>
+            </tr>
 
-          <tr>
-            <td style="font-size: 11px;" colspan="2"><span t-esc="folio_fiscal"/></td>
-          </tr>
+            <tr>
+              <td style="font-size: 11px;" colspan="2"><span t-esc="folio_fiscal"/></td>
+            </tr>
+          </t>
 
-          <tr style="height:35px;">
-            <th style="color:black; font-size: 12px;">CADENA ORIGINAL: </th>
-          </tr>
+          <t t-if="'datos_certificacion' in receipt">
+            <t t-if="receipt.datos_certificacion.cadena_original">
+              <tr style="height:35px;">
+                <th style="color:black; font-size: 12px;">CADENA ORIGINAL: </th>
+              </tr>
 
-          <tr style="height:80px; Word-break:break-all;">
-            <td style="font-size: 10px; Word-break:break-all;" colspan="2">
-              <div class="digital-stamp-content">
-                <span t-esc="receipt.datos_certificacion.cadena_original"/>
-              </div>
-            </td>
-          </tr>
+              <tr style="height:80px; Word-break:break-all;">
+                <td style="font-size: 10px; Word-break:break-all;" colspan="2">
+                  <div class="digital-stamp-content">
+                    <span t-esc="receipt.datos_certificacion.cadena_original"/>
+                  </div>
+                </td>
+              </tr>
+            </t>
+          </t>
 
-          <tr style="height:35px;">
-            <th style="color:black; font-size: 12px;">SELLO SAT: </th>
-          </tr>
+          <t t-if="'datos_certificacion' in receipt">
 
-          <tr style="height:80px; Word-break:break-all;">
-            <td style="font-size: 10px; Word-break:break-all;" colspan="2">
-              <div class="digital-stamp-content">
-                <span t-esc="receipt.datos_certificacion.sello_sat"/>
-              </div>
-            </td>
-          </tr>
+            <t t-if="receipt.datos_certificacion.sello_sat">
+              <tr style="height:35px;">
+                <th style="color:black; font-size: 12px;">SELLO SAT: </th>
+              </tr>
 
-          <tr style="height:35px;">
-            <th style="color:black; font-size: 12px;" colspan="2">SELLO DIGITAL DEL CFDI: </th>
-          </tr>
+              <tr style="height:80px; Word-break:break-all;">
+                <td style="font-size: 10px; Word-break:break-all;" colspan="2">
+                  <div class="digital-stamp-content">
+                    <span t-esc="receipt.datos_certificacion.sello_sat"/>
+                  </div>
+                </td>
+              </tr>
+            </t>
+          </t>
 
-          <tr style="height:80px; Word-break:break-all;">
-            <td style="font-size: 10px; Word-break:break-all;" colspan="2">
-              <span t-esc="receipt.datos_certificacion.sello_digital_emisor"/>
-            </td>
-          </tr>
+          <t t-if="'datos_certificacion' in receipt">
+            <t t-if="receipt.datos_certificacion.sello_digital_emisor">
+              <tr style="height:35px;">
+                <th style="color:black; font-size: 12px;" colspan="2">SELLO DIGITAL DEL CFDI: </th>
+              </tr>
+
+              <tr style="height:80px; Word-break:break-all;">
+                <td style="font-size: 10px; Word-break:break-all;" colspan="2">
+                  <span t-esc="receipt.datos_certificacion.sello_digital_emisor"/>
+                </td>
+              </tr>
+            </t>
+          </t>
 
           <tr style="height:70px;">
             <th style="font-size: 10px;" align="center" colspan="2"></th>
