@@ -17,10 +17,10 @@
     'depends': ['point_of_sale'],
 
     'data': [
-        'views/templates.xml',
+        # 'views/templates.xml',
     ],
     'qweb': [
-        'static/src/xml/pos.xml',
+        # 'static/src/xml/pos.xml',
     ],
     'installable': True,
     'auto_install': False,
