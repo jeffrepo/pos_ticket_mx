@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
+  <t t-name="pos_ticket_mx.OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+  <!-- <t t-extend="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1"> -->
+    <!-- <xpath expr="//div[hasclass('before-footer')]" position="inside"> -->
+    <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
 
-  <t t-extend="OrderReceipt">
-
-    <t t-jquery=".pos-receipt" t-operation="replace">
       <br/>
+
       <div class="pos-receipt">
         <t t-if="receipt.company.logo">
           <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
@@ -18,6 +20,7 @@
               <th style="font-size: 11px;" t-esc="receipt.name"></th>
             </div>
           </tr>
+
           <tr style="height:10px;">
             <div class="pos-receipt-order-data">
               <td style="font-size: 11px;" t-esc="receipt.date.localestring"></td>
@@ -33,7 +36,7 @@
           <div class="pos-receipt-amount">
 
             <tr style="height:50">
-              <td style="color:black; height:0.20cms; font-size: 13px;"><span t-esc="widget.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
+              <td style="color:black; height:0.20cms; font-size: 13px;"><span t-esc="env.pos.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
               <td></td>
               <td></td>
             </tr>
@@ -53,12 +56,12 @@
           </tr>
           <br></br>
           <tr style="height:15px;">
-            <td style="color:black; font-size: 11px;"><span t-esc="receipt.client"/></td>
+            <td style="color:black; font-size: 11px;"><span t-esc="receipt.client.name"/></td>
           </tr>
 
           <tr style="height:20px;">
-            <t t-if="vat">
-              <td style="font-size: 11px;"><span t-esc="vat"/></td>
+            <t t-if="receipt.client.vat">
+              <td style="font-size: 11px;"><span t-esc="receipt.client.vat"/></td>
             </t>
           </tr>
 
@@ -88,6 +91,7 @@
 
         </table>
 
+
         <table style="width:100%;">
 
           <tr>
@@ -101,13 +105,16 @@
             <th style="color:black; height:0.30cms" colspan="4" align="center"><hr size="4px" color="black"></hr></th>
           </tr>
 
-          <tr t-foreach="order.get_orderlines()" t-as="l">
-            <t t-if="producto_descuento_id != l.product.id">
-              <td style="font-size: 10px;" align="center"><span t-esc="l.get_quantity()"/></td>
-              <td style="font-size: 10px;"><span t-esc="l.product.display_name"/></td>
-              <td style="font-size: 10px;" align="right"><span t-esc="l.get_unit_price().toFixed(2)" /></td>
-              <td style="font-size: 10px;" align="right"><span t-esc="(l.get_quantity()*l.get_unit_price()).toFixed(2)" /></td>
+          <tr t-foreach="receipt.orderlines" t-as="l">
+            <t t-if="l.price > 0">
+              <td style="font-size: 10px;" align="center"><span t-esc="l.quantity"/></td>
+              <td style="font-size: 10px;"><span t-esc="l.product_name_wrapped[0]"/></td>
+              <td style="font-size: 10px;" align="right"><span t-esc="env.pos.format_currency_no_symbol(l.price)" /></td>
+              <td style="font-size: 10px;" align="right"><span t-esc="(l.quantity*l.price).toFixed(2)"/></td>
             </t>
+
+
+
           </tr>
 
           <tr>
@@ -117,6 +124,7 @@
         </table>
 
         <table style="width:100%;" >
+
           <t t-if="'datos_certificacion' in receipt">
             <t t-if="vat || folio_fiscal || certificado_sat || receipt.datos_certificacion.sello_sat">
               <tr>
@@ -133,24 +141,27 @@
 
           <tr>
             <td></td>
-            <td style="color:black; font-size:10px;">  DESCUENTO:</td>
-            <t style="font-size: 10px;" t-foreach="order.get_orderlines()" t-as="l">
-              <t t-if="l.product.id == producto_descuento_id">
-                <td style="font-size:10px;" align="right"><span t-esc="l.get_unit_price()"/></td>
+            <td style="color:black; font-size:10px;" >  DESCUENTO:</td>
+            <!-- <t style="font-size: 10px;" t-foreach="receipt.orderlines" t-as="l">
+              <t t-if="l.price &lt; 0">
+                <td style="font-size:10px;" align="right"><span t-esc="descuento+=l.price"/></td>
               </t>
+            </t> -->
+            <t style="font-size: 10px;" t-if="state.descuento">
+              <td style="font-size:10px;" align="right"><span t-esc="env.pos.format_currency(state.descuento)"/></td>
             </t>
           </tr>
 
           <tr>
             <td></td>
             <td style="color:black; font-size: 10px;">  SUBTOTAL: </td>
-            <td style="font-size: 10px;" align="right"><span t-esc="receipt.total_without_tax"/></td>
+            <td style="font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.subtotal)"/></td>
           </tr>
 
           <tr>
             <td></td>
             <td style="color:black; font-size: 10px;">  I.V.A. 16%: </td>
-            <td style="font-size: 10px;" align="right"><span t-esc="receipt.total_tax"/></td>
+            <td style="font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.total_tax)"/></td>
           </tr>
 
           <tr>
@@ -162,16 +173,17 @@
             <td></td>
             <td style="color:black; font-size: 10px;">  TOTAL: </td>
             <div class="pos-receipt-amount">
-              <td style="color:black; font-size: 10px;" align="right"><span t-esc="widget.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
+              <td style="color:black; font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.total_rounded)" class="pos-receipt-right-align"/></td>
             </div>
           </tr>
 
           <tr>
-            <td style="font-color:white; font-size: 10px; color:#FDFEFE; font:white;"> <FONT COLOR="white"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]></FONT></td>
+            <td style="font-color:white; font-size: 10px; color:#FDFEFE; font:white;"> </td>
+            <!-- <font COLOR="white"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]></font> -->
             <td style="font-size: 10px;">Tipo de pago: </td>
           </tr>
 
-          <tr t-foreach="paymentlines" t-as="line">
+          <tr t-foreach="receipt.paymentlines" t-as="line">
             <td></td>
             <td style="font-size: 10px;" t-esc="line.name">  </td>
           </tr>
@@ -187,8 +199,8 @@
           </tr>
 
           <tr style="height:35px;">
-            <t t-if="total_letras">
-              <td style="color:black; font-size: 13px;" colspan="2" align="center"><span t-esc="total_letras"/></td>
+            <t t-if="state.total_letras">
+              <td style="color:black; font-size: 13px;" colspan="2" align="center"><span t-esc="state.total_letras"/></td>
             </t>
           </tr>
 
@@ -200,7 +212,7 @@
 
               <tr>
                 <td style="font-size: 12px;" colspan="2"><span t-esc="receipt.datos_certificacion.regimen_fiscal"/> Régimen general de ley personas morales</td>
-                <!-- <td style="font-size: 12px;" align="left">Régimen general de ley personas morales</td> -->
+
               </tr>
             </t>
           </t>
@@ -292,7 +304,8 @@
         </table>
 
       </div>
-    </t>
+
+    </xpath>
 
 
   </t>
