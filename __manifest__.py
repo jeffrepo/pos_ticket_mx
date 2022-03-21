@@ -17,21 +17,11 @@
     'depends': ['point_of_sale'],
 
     'data': [
-        # 'views/templates.xml',
+        'views/templates.xml',
     ],
-    'assets':{
-        'point_of_sale.assets': [
-            'pos_ticket_mx/static/src/css/pos_ticket_mx.css',
-            'pos_ticket_mx/static/src/js/qrcode.js',
-            'pos_ticket_mx/static/src/js/Screens/ReceiptScreen/OrderReceipt.js',
-            'pos_ticket_mx/static/src/js/models.js',
-        ],
-        'web.assets_qweb':[
-            'pos_ticket_mx/static/src/xml/**/*',
-        ],
-    },
-    'license': 'LGPL-3',
-
+    'qweb': [
+        'static/src/xml/pos.xml',
+    ],
     'installable': True,
     'auto_install': False,
 }
