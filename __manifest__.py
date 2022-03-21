@@ -17,12 +17,11 @@
     'depends': ['point_of_sale'],
 
     'data': [
-        # 'views/templates.xml',
+        'views/templates.xml',
     ],
     'qweb': [
-        # 'static/src/xml/pos.xml',
+        'static/src/xml/pos.xml',
     ],
-    'license': 'LGPL-3',
     'installable': True,
     'auto_install': False,
 }

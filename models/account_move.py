@@ -12,8 +12,6 @@ class Picking(models.Model):
     @api.model
     def obtener_valores_factura_mx(self, id_factura):
         factura_id = self.env['account.move'].search([('id','=',id_factura)])
-        logging.warn("factura_id");
-        logging.warn(factura_id)
         cfdi=None
         sello_sat = None
         # factura_id = None
@@ -28,20 +26,24 @@ class Picking(models.Model):
         folio_fiscal = None
         cadena_original = None
         if factura_id:
-            logging.warn("Primera parte factura_id si trae algo")
-            logging.warn(factura_id)
-            cfdi = base64.decodestring(factura_id.l10n_mx_edi_cfdi)
+            cfdi_values1 = self._l10n_mx_edi_get_invoice_cfdi_values(base64.decodebytes(factura_id))
+
+            cfdi1 = self.env.ref('l10n_mx_edi.cfdiv33')._render(cfdi_values1)
+
+            decoded_cfdi_values = invoice._l10n_mx_edi_decode_cfdi(cfdi_data=cfdi1)
+            cfdi = invoice._l10n_mx_edi_decode_cfdi(cfdi_data=cfdi1)
+            # cfdi = base64.decodestring((factura_id.l10n_mx_edi_cfdi_uuid))
             xml = factura_id.l10n_mx_edi_get_xml_etree()
             tfd = factura_id.l10n_mx_edi_get_tfd_etree(xml)
             sello_sat = tfd.get('selloSAT', tfd.get('SelloSAT', 'No identificado'))
             certificado_sat = tfd.get('NoCertificadoSAT')
             folio_fiscal = tfd.get('UUID')
-            
-        logging.warn("El xml")
-        logging.warn(xml)
-        logging.warn("-----------------")
-        logging.warn("Que es tfd ?")
-        logging.warn(tfd)
+
+        logging.warning("El xml")
+        logging.warning(xml)
+        logging.warning("-----------------")
+        logging.warning("Que es tfd ?")
+        logging.warning(tfd)
 
 
 
@@ -73,10 +75,5 @@ class Picking(models.Model):
     def letras_numeros (self, id_pedido):
         pedido = self.env['pos.order'].search([('id','=',id_pedido)])
         string_to = self.env['account.move'].l10n_mx_edi_amount_to_text(pedido)
-        logging.warn("Pedido")
-        logging.warn(string_to)
-        # string_total = pedido.l10n_mx_edi_amount_to_text()
-        # self.env['account.move'].nombre_funcion(tu parametro en este caso tu pedido)
-        logging.warn("Total letras a numeros :D")
-        hola = "Hola"
+
         return string_to

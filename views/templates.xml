@@ -2,15 +2,17 @@
 <odoo>
     <data>
 
-        <template id="assets" inherit_id="point_of_sale.assets">
-          <xpath expr="//link[@id='pos-stylesheet']" position="after">
+        <template id="assets" inherit_id="point_of_sale.assets_common">
+          <!-- <xpath expr="//link[@id='pos-stylesheet']" position="after">
               <link rel="stylesheet" href="/pos_ticket_mx/static/src/css/pos_ticket_mx.css"/>
-          </xpath>
+          </xpath> -->
 
           <xpath expr="." position="inside">
               <script type="text/javascript" src="/pos_ticket_mx/static/src/js/qrcode.js"></script>
               <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script> -->
-              <script type="text/javascript" src="/pos_ticket_mx/static/src/js/screens.js"></script>
+              <!-- <script type="text/javascript" src="/pos_ticket_mx/static/src/js/Screens/PaymentScreen/PaymentScreen.js"></script> -->
+              <script type="text/javascript" src="/pos_ticket_mx/static/src/js/Screens/ReceiptScreen/OrderReceipt.js"></script>
+              <script type="text/javascript" src="/pos_ticket_mx/static/src/js/models.js"></script>
           </xpath>
         </template>
 
