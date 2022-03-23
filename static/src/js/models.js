@@ -5,7 +5,7 @@ const { Context } = owl;
 var models = require('point_of_sale.models');
 // var { Gui } = require('point_of_sale.Gui');
 var core = require('web.core');
-var rpc = require('web.rpc');
+
 var _t = core._t;
 
 var _super_order = models.Order.prototype;

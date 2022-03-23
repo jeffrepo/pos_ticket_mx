@@ -125,15 +125,16 @@
 
         <table style="width:100%;" >
 
-          <t t-if="'datos_certificacion' in receipt">
-            <t t-if="vat || folio_fiscal || certificado_sat || receipt.datos_certificacion.sello_sat">
+          <t t-if="'datos_certificacion' in state">
+            <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
               <tr>
-                <td style="width:100px;" rowspan="10" colspan="2">
-                  <div id="qrcode"></div>
+                <td style="width:100px; padding:10px" rowspan="10" colspan="2" class="barcode col-3">
+                  <div id="qrcode">
                   <script type="text/javascript">
-                    var qr_string = "<t t-esc="qr_string"/>";
+                    var qr_string = "<t t-esc="state.qr_string"/>";
                     new QRCode(document.getElementById("qrcode"), qr_string);
                   </script>
+                  </div>
                 </td>
               </tr>
             </t>
@@ -172,9 +173,7 @@
           <tr>
             <td></td>
             <td style="color:black; font-size: 10px;">  TOTAL: </td>
-            <div class="pos-receipt-amount">
-              <td style="color:black; font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.total_rounded)" class="pos-receipt-right-align"/></td>
-            </div>
+            <td style="color:black; font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.total_rounded)"/></td>
           </tr>
 
           <tr>
@@ -204,30 +203,30 @@
             </t>
           </tr>
 
-          <t t-if="'datos_certificacion' in receipt">
-            <t t-if="receipt.datos_certificacion.regimen_fiscal">
+          <t t-if="'datos_certificacion' in state">
+            <t t-if="state.regimen_fiscal">
               <tr style="height:35px;">
                 <th style="font-size: 12px; color:black;">Régimen fiscal: </th>
               </tr>
 
               <tr>
-                <td style="font-size: 12px;" colspan="2"><span t-esc="receipt.datos_certificacion.regimen_fiscal"/> Régimen general de ley personas morales</td>
+                <td style="font-size: 12px;" colspan="2"><span t-esc="state.regimen_fiscal"/> Régimen general de ley personas morales</td>
 
               </tr>
             </t>
           </t>
 
-          <t t-if="certificado_sat">
+          <t t-if="state.certificado_sat">
             <tr style="height:35px;">
               <th style="font-size: 12px; color:black;">CERTIFICADO SAT: </th>
-              <td style="font-size: 12px;" align="left"><span t-esc="certificado_sat"/></td>
+              <td style="font-size: 12px;" align="left"><span t-esc="state.certificado_sat"/></td>
             </tr>
           </t>
 
-          <t t-if="fecha_certificacion">
+          <t t-if="state.fecha_certificacion">
             <tr style="height:35px;">
               <th style="font-size: 11px; color:black;">FECHA CERTIFICACIÓN: </th>
-              <td style="font-size: 11px;" align="left"><span t-esc="fecha_certificacion"/></td>
+              <td style="font-size: 11px;" align="left"><span t-esc="state.fecha_certificacion"/></td>
             </tr>
           </t>
 
@@ -235,18 +234,18 @@
             <td style="font-size: 10px;"></td>
           </tr>
 
-          <t t-if="folio_fiscal">
+          <t t-if="state.folio_fiscal">
             <tr style="height:35px;">
               <th style="font-size: 12px; color:black;">FOLIO FISCAL: </th>
             </tr>
 
             <tr>
-              <td style="font-size: 11px;" colspan="2"><span t-esc="folio_fiscal"/></td>
+              <td style="font-size: 11px;" colspan="2"><span t-esc="state.folio_fiscal"/></td>
             </tr>
           </t>
 
-          <t t-if="'datos_certificacion' in receipt">
-            <t t-if="receipt.datos_certificacion.cadena_original">
+          <t t-if="'datos_certificacion' in state">
+            <t t-if="state.cadena_original">
               <tr style="height:35px;">
                 <th style="color:black; font-size: 12px;">CADENA ORIGINAL: </th>
               </tr>
@@ -254,16 +253,16 @@
               <tr style="height:80px; Word-break:break-all;">
                 <td style="font-size: 10px; Word-break:break-all;" colspan="2">
                   <div class="digital-stamp-content">
-                    <span t-esc="receipt.datos_certificacion.cadena_original"/>
+                    <span t-esc="state.cadena_original"/>
                   </div>
                 </td>
               </tr>
             </t>
           </t>
 
-          <t t-if="'datos_certificacion' in receipt">
+          <t t-if="'datos_certificacion' in state">
 
-            <t t-if="receipt.datos_certificacion.sello_sat">
+            <t t-if="state.sello_sat">
               <tr style="height:35px;">
                 <th style="color:black; font-size: 12px;">SELLO SAT: </th>
               </tr>
@@ -271,22 +270,22 @@
               <tr style="height:80px; Word-break:break-all;">
                 <td style="font-size: 10px; Word-break:break-all;" colspan="2">
                   <div class="digital-stamp-content">
-                    <span t-esc="receipt.datos_certificacion.sello_sat"/>
+                    <span t-esc="state.sello_sat"/>
                   </div>
                 </td>
               </tr>
             </t>
           </t>
 
-          <t t-if="'datos_certificacion' in receipt">
-            <t t-if="receipt.datos_certificacion.sello_digital_emisor">
+          <t t-if="'datos_certificacion' in state">
+            <t t-if="state.sello_digital_cfdi">
               <tr style="height:35px;">
                 <th style="color:black; font-size: 12px;" colspan="2">SELLO DIGITAL DEL CFDI: </th>
               </tr>
 
               <tr style="height:80px; Word-break:break-all;">
                 <td style="font-size: 10px; Word-break:break-all;" colspan="2">
-                  <span t-esc="receipt.datos_certificacion.sello_digital_emisor"/>
+                  <span t-esc="state.sello_digital_cfdi"/>
                 </td>
               </tr>
             </t>
