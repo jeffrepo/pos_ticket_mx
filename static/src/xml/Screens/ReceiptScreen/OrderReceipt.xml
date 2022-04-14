@@ -26,7 +26,11 @@
               <td style="font-size: 11px;" t-esc="receipt.date.localestring"></td>
             </div>
             <td></td>
-            <th style="color:black; font-size: 13px;">USO CFDI:</th>
+            <t t-if="'datos_certificacion' in state">
+              <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+                <th style="color:black; font-size: 13px;">USO CFDI:</th>
+              </t>
+            </t>
           </tr>
 
           <tr>
@@ -48,7 +52,11 @@
           </tr>
 
           <tr style="height:35px;">
-            <th colspan="2" style="color:black; font-size: 13px;">CERTIFICADO CFDI:</th>
+            <t t-if="'datos_certificacion' in state">
+              <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+                <th colspan="2" style="color:black; font-size: 13px;">CERTIFICADO CFDI:</th>
+              </t>
+            </t>
           </tr>
 
           <tr style="height:35px;">
@@ -295,9 +303,14 @@
             <th style="font-size: 10px;" align="center" colspan="2"></th>
           </tr>
 
-          <tr style="height:35px;">
-            <th style="font-size: 10px;" align="center" colspan="2">Este documento es una representacion impresa de un CFDI, los datos que no se muestran, estan contenidos en el XML </th>
-          </tr>
+          <t t-if="'datos_certificacion' in state">
+            <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+              <tr style="height:35px;">
+                <th style="font-size: 10px;" align="center" colspan="2">Este documento es una representacion impresa de un CFDI, los datos que no se muestran, estan contenidos en el XML </th>
+              </tr>
+            </t>
+          </t>
+          
 
 
         </table>
