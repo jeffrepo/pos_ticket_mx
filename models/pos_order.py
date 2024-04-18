@@ -43,6 +43,7 @@ class Picking(models.Model):
 
 class PosOrder(models.Model):
     _inherit = "pos.order"
+    
     def descuento_lineas(self,pedido_id,lines):
         precio_total_descuento = 0
         precio_total_positivo = 0
@@ -71,6 +72,8 @@ class PosOrder(models.Model):
     def lineas_eliminadas(self, lines, order):
         precio_total_descuento = 0
         precio_total_positivo = 0
+        logging.warning('ORDERS')
+        logging.warning(order)
         for linea in lines['lines']:
             for elemento_linea in linea:
                 if elemento_linea != 0:
@@ -82,6 +85,7 @@ class PosOrder(models.Model):
 
         posicion = 0
         i=0
+        logging.warning('primera linea')
         for linea0 in lines['lines']:
             for elemento_linea1 in linea0:
                 if elemento_linea1 !=0:
@@ -93,7 +97,7 @@ class PosOrder(models.Model):
 
         # linea.unlink()
         dele=0
-
+        logging.warning('segunda linea')
         for linea1 in order['data']['lines']:
             for elemento_linea2 in linea1:
                 if elemento_linea2 != 0:
@@ -102,23 +106,25 @@ class PosOrder(models.Model):
             dele+=1
 
         order1 = order
-
+        logging.warning('tercer linea')
         for i in order1['data']['lines']:
             if [] in order1['data']['lines']:
                 order['data']['lines'].remove([])
-
+        logging.warning('termina')
         return True
 
-    @api.model
-    def _process_order(self, order, draft, existing_order):
-        self.lineas_eliminadas(order['data'], order)
+    # @api.model
+    # def _process_order(self, order, draft, existing_order):
+    #     # for o in self: 
+    #     #     logging.warning(o)
+    #     #     self.lineas_eliminadas(order['data'], order)
 
 
-        # if existencia_orden:
-        #     pedido_id = self.env['pos.order'].search([('id','=', existencia_orden)])
-        #     logging.warning('Si se esta creando el pedido');
-        #     if pedido_id:
-        #         logging.warning('Linea 89')
-        #         self.descuento_lineas(pedido_id,pedido_id.lines)
-        res = super(PosOrder, self)._process_order(order, draft, existing_order)
-        return res
+    #     # if existencia_orden:
+    #     #     pedido_id = self.env['pos.order'].search([('id','=', existencia_orden)])
+    #     #     logging.warning('Si se esta creando el pedido');
+    #     #     if pedido_id:
+    #     #         logging.warning('Linea 89')
+    #     #         self.descuento_lineas(pedido_id,pedido_id.lines)
+    #     res = super(PosOrder, self)._process_order(order, draft, existing_order)
+    #     return res

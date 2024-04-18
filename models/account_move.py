@@ -12,6 +12,8 @@ class Picking(models.Model):
     @api.model
     def obtener_valores_factura_mx(self, id_factura):
         factura_id = self.env['account.move'].search([('id','=',id_factura)])
+        logging.warning('obtener_valores_factura_mx')
+        logging.warning(id_factura)
         sello_sat = None
         # factura_id = None
         regimen_fiscal = None
@@ -24,6 +26,7 @@ class Picking(models.Model):
         cadena_original = None
         vat_empresa = None
         monto_total = None
+        vat_usuario = None
         if factura_id:
             if factura_id.state == 'posted':
                 factura_id._l10n_mx_edi_decode_cfdi()
@@ -66,7 +69,9 @@ class Picking(models.Model):
 
     def _post(self, soft=True):
         #Funcion heredada y creada para activar el boton de "process now"
+        logging.warning('POST')
         res = super()._post(soft)
+        logging.warning('intentar _POST')
         res.action_process_edi_web_services();
         return res
 

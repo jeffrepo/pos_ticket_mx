@@ -73,9 +73,10 @@ odoo.define('pos_ticket_mx.OrderReceipt', function(require) {
                       timeout:3000,
                     }).then(function (factura_unica) {
                       var extraida = '';
-
+                      console.log('factura_unica')
+                      console.log(factura_unica)
                       state.qr_string=false;
-                      order.set_totalString(factura_unica['total_string']);
+                      // order.set_totalString(factura_unica['total_string']);
                       state.total_letras = factura_unica['total_string'];
                       state.datos_certificacion = factura_unica;
                       state.certificado_sat = factura_unica['certificado_sat'];
@@ -98,6 +99,8 @@ odoo.define('pos_ticket_mx.OrderReceipt', function(require) {
                       // "https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?re=",factura_unica['folio_fiscal'],+"&rr="+receipt_env['receipt']['company']['vat'], +"&tt="+receipt_env['vat'], receipt_env['receipt']['total_with_tax'], extraida
                       var string_parte_1 = "&rr="+state.vat;
                       var link = ["https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?re=",factura_unica['vat_empresa'],string_parte_1,"&","tt=",(total_factura).toFixed(2),"&","id=",state.folio_fiscal,"&","fe=",extraida].join('');
+                        console.log('link')
+                        console.log(link)
                       // var link = 'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?re=%s&%s rr=%s tt=%s id=%s fe=%s'%(receipt_env['receipt']['company']['vat'],receipt_env['vat'],(receipt_env['receipt']['total_with_tax']).toFixed(2),factura_unica['folio_fiscal'],extraida);
 
                       state.qr_string = link;
@@ -128,7 +131,7 @@ odoo.define('pos_ticket_mx.OrderReceipt', function(require) {
                   // var state = this.state;
                   state['total_letras']=false;
                   state['total_letras']=total;
-                  order.set_totalString(total);
+                  // order.set_totalString(total);
 
 
                 });

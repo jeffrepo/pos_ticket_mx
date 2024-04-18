@@ -3,6 +3,11 @@
   <t t-name="pos_ticket_mx.OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
   <!-- <t t-extend="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1"> -->
     <!-- <xpath expr="//div[hasclass('before-footer')]" position="inside"> -->
+            <!-- <xpath expr="//*[@class='pos-receipt']" position="attributes">
+            <attribute name="style">
+                position: relative; left: 1.2em; font-size: 150%; zoom: 90%;
+            </attribute>
+        </xpath>   -->
     <xpath expr="//div[hasclass('pos-receipt')]" position="replace">
 
       <br/>
@@ -14,21 +19,35 @@
 
         <table style="width:100%;">
           <tr>
-            <th style="color:black;">Factura</th>
+            <th style="color:black;">
+
+                    <t t-if="'datos_certificacion' in state">
+                        <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+                            Factura
+                        </t>
+                        <t t-else="">
+                            Recibo
+                        </t>    
+                    </t>
+                    <t t-else="">
+                        Recibo
+                    </t>    
+                
+            </th>
             <td></td>
             <div class="pos-receipt-order-data">
-              <th style="font-size: 11px;" t-esc="receipt.name"></th>
+              <th  t-esc="receipt.name"></th>
             </div>
           </tr>
 
           <tr style="height:10px;">
             <div class="pos-receipt-order-data">
-              <td style="font-size: 11px;" t-esc="receipt.date.localestring"></td>
+              <td  t-esc="receipt.date.localestring"></td>
             </div>
             <td></td>
             <t t-if="'datos_certificacion' in state">
               <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
-                <th style="color:black; font-size: 13px;">USO CFDI:</th>
+                <th style="color:black; ">USO CFDI:</th>
               </t>
             </t>
           </tr>
@@ -37,7 +56,7 @@
             <th style="color:black; height:50" colspan="3" align="center"></th>
           </tr>
 
-          <div class="pos-receipt-amount">
+          <!-- <div class="pos-receipt-amount">
 
             <tr style="height:50">
               <td style="color:black; height:0.20cms; font-size: 13px;"><span t-esc="env.pos.format_currency(receipt.total_with_tax)" class="pos-receipt-right-align"/></td>
@@ -45,7 +64,7 @@
               <td></td>
             </tr>
 
-          </div>
+          </div> -->
 
           <tr>
             <th style="color:black; height:50" colspan="3" align="center"></th>
@@ -54,43 +73,43 @@
           <tr style="height:35px;">
             <t t-if="'datos_certificacion' in state">
               <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
-                <th colspan="2" style="color:black; font-size: 13px;">CERTIFICADO CFDI:</th>
+                <th colspan="2" style="color:black; ">CERTIFICADO CFDI:</th>
               </t>
             </t>
           </tr>
 
           <tr style="height:35px;">
-            <th style="color:black; font-size: 13px;">Receptor:</th>
+            <th style="color:black; ">Receptor:</th>
           </tr>
           <br></br>
           <tr style="height:15px;">
-            <td style="color:black; font-size: 11px;"><span t-esc="receipt.client.name"/></td>
+            <td style="color:black; "><span t-esc="receipt.client.name"/></td>
           </tr>
 
           <tr style="height:20px;">
             <t t-if="receipt.client.vat">
-              <td style="font-size: 11px;"><span t-esc="receipt.client.vat"/></td>
+              <td ><span t-esc="receipt.client.vat"/></td>
             </t>
           </tr>
 
           <tr style="height:35px;">
-            <th style="color:black; font-size: 13px;">EMISOR:</th>
+            <th style="color:black; ">EMISOR:</th>
           </tr>
           <div class="pos-receipt-contact">
             <tr style="height:15px;">
               <t t-if="receipt.company.vat">
-                <td style="font-size: 11px;" colspan="2" t-esc="receipt.company.name"></td>
+                <td  colspan="2" t-esc="receipt.company.name"></td>
               </t>
             </tr>
             <tr style="height:20px;">
               <t t-if="receipt.company.vat">
-                <td style="font-size: 11px;" colspan="2" t-esc="receipt.company.vat"></td>
+                <td  colspan="2" t-esc="receipt.company.vat"></td>
               </t>
             </tr>
           </div>
 
           <tr style="height:35px;">
-            <th style="color:black; font-size: 13px;" colspan="2">Expedido en:</th>
+            <th style="color:black; " colspan="2">Expedido en:</th>
           </tr>
           <br></br>
           <tr>
@@ -100,13 +119,13 @@
         </table>
 
 
-        <table style="width:100%;">
+        <table style="width:100%;" >
 
           <tr>
-            <th style="color:black; font-size: 12px;">Cantidad</th>
-            <th style="color:black; font-size: 12px;" align="center">Descripción</th>
-            <th style="color:black; font-size: 12px;" align="center">Precio</th>
-            <th style="color:black; font-size: 12px;">Importe</th>
+            <th style="color:black; ">Cantidad</th>
+            <th style="color:black; " align="center">Descripción</th>
+            <th style="color:black; " align="center">Precio</th>
+            <th style="color:black; ">Importe</th>
           </tr>
 
           <tr>
@@ -115,10 +134,10 @@
 
           <tr t-foreach="receipt.orderlines" t-as="l">
             <t t-if="l.price > 0">
-              <td style="font-size: 10px;" align="center"><span t-esc="l.quantity"/></td>
-              <td style="font-size: 10px;"><span t-esc="l.product_name_wrapped[0]"/></td>
-              <td style="font-size: 10px;" align="right"><span t-esc="env.pos.format_currency_no_symbol(l.price)" /></td>
-              <td style="font-size: 10px;" align="right"><span t-esc="(l.quantity*l.price).toFixed(2)"/></td>
+              <td  align="center"><span t-esc="l.quantity"/></td>
+              <td ><span t-esc="l.product_name_wrapped[0]"/></td>
+              <td align="right"><span t-esc="env.pos.format_currency_no_symbol(l.price)" /></td>
+              <td  align="right"><span t-esc="(l.quantity*l.price).toFixed(2)"/></td>
             </t>
 
 
@@ -131,7 +150,7 @@
 
         </table>
 
-        <table style="width:100%;" >
+        <table style="width:100%;">
 
           <t t-if="'datos_certificacion' in state">
             <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
@@ -150,27 +169,27 @@
 
           <tr>
             <td></td>
-            <td style="color:black; font-size:10px;" >  DESCUENTO:</td>
+            <td style="color:black; " >  DESCUENTO:</td>
             <!-- <t style="font-size: 10px;" t-foreach="receipt.orderlines" t-as="l">
               <t t-if="l.price &lt; 0">
                 <td style="font-size:10px;" align="right"><span t-esc="descuento+=l.price"/></td>
               </t>
             </t> -->
-            <t style="font-size: 10px;" t-if="state.descuento">
-              <td style="font-size:10px;" align="right"><span t-esc="env.pos.format_currency(state.descuento)"/></td>
+            <t  t-if="state.descuento">
+              <td  align="right"><span t-esc="env.pos.format_currency(state.descuento)"/></td>
             </t>
           </tr>
 
           <tr>
             <td></td>
-            <td style="color:black; font-size: 10px;">  SUBTOTAL: </td>
-            <td style="font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.subtotal)"/></td>
+            <td style="color:black; ">  SUBTOTAL: </td>
+            <td  align="right"><span t-esc="env.pos.format_currency(receipt.subtotal)"/></td>
           </tr>
 
           <tr>
             <td></td>
-            <td style="color:black; font-size: 10px;">  I.V.A. 16%: </td>
-            <td style="font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.total_tax)"/></td>
+            <td style="color:black; ">  I.V.A. 16%: </td>
+            <td  align="right"><span t-esc="env.pos.format_currency(receipt.total_tax)"/></td>
           </tr>
 
           <tr>
@@ -180,19 +199,19 @@
 
           <tr>
             <td></td>
-            <td style="color:black; font-size: 10px;">  TOTAL: </td>
-            <td style="color:black; font-size: 10px;" align="right"><span t-esc="env.pos.format_currency(receipt.total_rounded)"/></td>
+            <td style="color:black; ">  TOTAL: </td>
+            <td style="color:black; " align="right"><span t-esc="env.pos.format_currency(receipt.total_rounded)"/></td>
           </tr>
 
           <tr>
-            <td style="font-color:white; font-size: 10px; color:#FDFEFE; font:white;"> </td>
+            <td style="font-color:white; color:#FDFEFE; font:white;"> </td>
             <!-- <font COLOR="white"><![CDATA[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]]></font> -->
-            <td style="font-size: 10px;">Tipo de pago: </td>
+            <td >Tipo de pago: </td>
           </tr>
 
           <tr t-foreach="receipt.paymentlines" t-as="line">
             <td></td>
-            <td style="font-size: 10px;" t-esc="line.name">  </td>
+            <td  t-esc="line.name">  </td>
           </tr>
 
         </table>
@@ -207,18 +226,18 @@
 
           <tr style="height:35px;">
             <t t-if="state.total_letras">
-              <td style="color:black; font-size: 13px;" colspan="2" align="center"><span t-esc="state.total_letras"/></td>
+              <td style="color:black;" colspan="2" align="center"><span t-esc="state.total_letras"/></td>
             </t>
           </tr>
 
           <t t-if="'datos_certificacion' in state">
             <t t-if="state.regimen_fiscal">
               <tr style="height:35px;">
-                <th style="font-size: 12px; color:black;">Régimen fiscal: </th>
+                <th style=" color:black;">Régimen fiscal: </th>
               </tr>
 
               <tr>
-                <td style="font-size: 12px;" colspan="2"><span t-esc="state.regimen_fiscal"/> Régimen general de ley personas morales</td>
+                <td colspan="2"><span t-esc="state.regimen_fiscal"/> Régimen general de ley personas morales</td>
 
               </tr>
             </t>
