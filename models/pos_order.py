@@ -43,7 +43,7 @@ class Picking(models.Model):
 
 class PosOrder(models.Model):
     _inherit = "pos.order"
-    
+
     def descuento_lineas(self,pedido_id,lines):
         precio_total_descuento = 0
         precio_total_positivo = 0
@@ -115,7 +115,7 @@ class PosOrder(models.Model):
 
     # @api.model
     # def _process_order(self, order, draft, existing_order):
-    #     # for o in self: 
+    #     # for o in self:
     #     #     logging.warning(o)
     #     #     self.lineas_eliminadas(order['data'], order)
 

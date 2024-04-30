@@ -21,35 +21,43 @@
           <tr>
             <th style="color:black;">
 
-                    <t t-if="'datos_certificacion' in state">
-                        <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+                    <t t-if="'folio_fiscal' in invoice_cfdinfo">
+                        <t t-if="invoice_cfdinfo.vat || invoice_cfdinfo.folio_fiscal || invoice_cfdinfo.certificado_sat || invoice_cfdinfo.sello_sat">
                             Factura
                         </t>
                         <t t-else="">
                             Recibo
-                        </t>    
+                        </t>
                     </t>
                     <t t-else="">
                         Recibo
-                    </t>    
-                
+                    </t>
+
             </th>
             <td></td>
+            <!-- <span t-esc="cfdinfo"/>   -->
             <div class="pos-receipt-order-data">
               <th  t-esc="receipt.name"></th>
             </div>
           </tr>
-
+          <t t-if="invoice_cfdinfo.serie">
+              <tr>
+                  <td >Serie: <span t-esc="invoice_cfdinfo.serie"/></td>
+              </tr>
+              <tr>
+                  <td>Folio: <span t-esc="invoice_cfdinfo.folio"/></td>
+              </tr>
+          </t>
           <tr style="height:10px;">
             <div class="pos-receipt-order-data">
               <td  t-esc="receipt.date.localestring"></td>
             </div>
             <td></td>
-            <t t-if="'datos_certificacion' in state">
+            <!-- <t t-if="'datos_certificacion' in state">
               <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
                 <th style="color:black; ">USO CFDI:</th>
               </t>
-            </t>
+            </t> -->
           </tr>
 
           <tr>
@@ -71,8 +79,8 @@
           </tr>
 
           <tr style="height:35px;">
-            <t t-if="'datos_certificacion' in state">
-              <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+            <t t-if="'folio_fiscal' in invoice_cfdinfo">
+              <t t-if="invoice_cfdinfo.vat || invoice_cfdinfo.folio_fiscal || invoice_cfdinfo.certificado_sat || invoice_cfdinfo.sello_sat">
                 <th colspan="2" style="color:black; ">CERTIFICADO CFDI:</th>
               </t>
             </t>
@@ -91,7 +99,24 @@
               <td ><span t-esc="receipt.client.vat"/></td>
             </t>
           </tr>
+          <tr>
+              <t t-if="'regimen_fiscal' in invoice_cfdinfo">
+                  <td><span t-esc="invoice_cfdinfo.regimen_fiscal"/></td>
+              </t>
+          </tr>
+          <t t-if="'uso_cfdi' in invoice_cfdinfo">
+              <t t-if="invoice_cfdinfo.uso_cfdi">
+                  <tr>
 
+                        <th style="color:black; ">USO CFDI: G03 Gastos en general</th>
+
+
+                  </tr>
+                  <!-- <tr>
+                          <td><span t-esc="invoice_cfdinfo.uso_cfdi"/></td>
+                  </tr>     -->
+              </t>
+          </t>
           <tr style="height:35px;">
             <th style="color:black; ">EMISOR:</th>
           </tr>
@@ -152,13 +177,13 @@
 
         <table style="width:100%;">
 
-          <t t-if="'datos_certificacion' in state">
-            <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+          <t t-if="'datos_certificacion' in invoice_cfdinfo">
+            <t t-if="invoice_cfdinfo.vat || invoice_cfdinfo.folio_fiscal || invoice_cfdinfo.certificado_sat || invoice_cfdinfo.sello_sat">
               <tr>
-                <td style="width:100px; padding:10px" rowspan="10" colspan="2" class="barcode col-3">
+                <td style="width:100px; padding:10px" rowspan="12" colspan="2" class="barcode col-3">
                   <div id="qrcode">
                   <script type="text/javascript">
-                    var qr_string = "<t t-esc="state.qr_string"/>";
+                    var qr_string = "<t t-esc="invoice_cfdinfo.qr_string"/>";
                     new QRCode(document.getElementById("qrcode"), qr_string);
                   </script>
                   </div>
@@ -175,8 +200,8 @@
                 <td style="font-size:10px;" align="right"><span t-esc="descuento+=l.price"/></td>
               </t>
             </t> -->
-            <t  t-if="state.descuento">
-              <td  align="right"><span t-esc="env.pos.format_currency(state.descuento)"/></td>
+            <t  t-if="invoice_cfdinfo.descuento">
+              <td  align="right"><span t-esc="env.pos.format_currency(invoice_cfdinfo.descuento)"/></td>
             </t>
           </tr>
 
@@ -214,46 +239,47 @@
             <td  t-esc="line.name">  </td>
           </tr>
 
-        </table>
 
+        </table>
+        <div><strong>PUE - Pago en una sola exhibición</strong></div>
         <table style="width:100%;">
 
           <tr style="height:35px;">
-            <t t-if="total_letras">
+            <t t-if="invoice_cfdinfo.total_letras">
               <td ></td>
             </t>
           </tr>
 
           <tr style="height:35px;">
-            <t t-if="state.total_letras">
-              <td style="color:black;" colspan="2" align="center"><span t-esc="state.total_letras"/></td>
+            <t t-if="invoice_cfdinfo.total_letras">
+              <td style="color:black;" colspan="2" align="center"><span t-esc="invoice_cfdinfo.total_letras"/></td>
             </t>
           </tr>
 
-          <t t-if="'datos_certificacion' in state">
-            <t t-if="state.regimen_fiscal">
+          <t t-if="'datos_certificacion' in invoice_cfdinfo">
+            <t t-if="invoice_cfdinfo.regimen_fiscal">
               <tr style="height:35px;">
                 <th style=" color:black;">Régimen fiscal: </th>
               </tr>
 
               <tr>
-                <td colspan="2"><span t-esc="state.regimen_fiscal"/> Régimen general de ley personas morales</td>
+                <td colspan="2"> Régimen general de ley personas morales</td>
 
               </tr>
             </t>
           </t>
 
-          <t t-if="state.certificado_sat">
+          <t t-if="invoice_cfdinfo.certificado_sat">
             <tr style="height:35px;">
               <th style="font-size: 12px; color:black;">CERTIFICADO SAT: </th>
-              <td style="font-size: 12px;" align="left"><span t-esc="state.certificado_sat"/></td>
+              <td style="font-size: 12px;" align="left"><span t-esc="invoice_cfdinfo.certificado_sat"/></td>
             </tr>
           </t>
 
-          <t t-if="state.fecha_certificacion">
+          <t t-if="invoice_cfdinfo.fecha_certificacion">
             <tr style="height:35px;">
               <th style="font-size: 11px; color:black;">FECHA CERTIFICACIÓN: </th>
-              <td style="font-size: 11px;" align="left"><span t-esc="state.fecha_certificacion"/></td>
+              <td style="font-size: 11px;" align="left"><span t-esc="invoice_cfdinfo.fecha_certificacion"/></td>
             </tr>
           </t>
 
@@ -261,18 +287,18 @@
             <td style="font-size: 10px;"></td>
           </tr>
 
-          <t t-if="state.folio_fiscal">
+          <t t-if="invoice_cfdinfo.folio_fiscal">
             <tr style="height:35px;">
               <th style="font-size: 12px; color:black;">FOLIO FISCAL: </th>
             </tr>
 
             <tr>
-              <td style="font-size: 11px;" colspan="2"><span t-esc="state.folio_fiscal"/></td>
+              <td style="font-size: 11px;" colspan="2"><span t-esc="invoice_cfdinfo.folio_fiscal"/></td>
             </tr>
           </t>
 
-          <t t-if="'datos_certificacion' in state">
-            <t t-if="state.cadena_original">
+          <t t-if="'datos_certificacion' in invoice_cfdinfo">
+            <t t-if="invoice_cfdinfo.cadena_original">
               <tr style="height:35px;">
                 <th style="color:black; font-size: 12px;">CADENA ORIGINAL: </th>
               </tr>
@@ -280,16 +306,16 @@
               <tr style="height:80px; Word-break:break-all;">
                 <td style="font-size: 10px; Word-break:break-all;" colspan="2">
                   <div class="digital-stamp-content">
-                    <span t-esc="state.cadena_original"/>
+                    <span t-esc="invoice_cfdinfo.cadena_original"/>
                   </div>
                 </td>
               </tr>
             </t>
           </t>
 
-          <t t-if="'datos_certificacion' in state">
+          <t t-if="'datos_certificacion' in invoice_cfdinfo">
 
-            <t t-if="state.sello_sat">
+            <t t-if="invoice_cfdinfo.sello_sat">
               <tr style="height:35px;">
                 <th style="color:black; font-size: 12px;">SELLO SAT: </th>
               </tr>
@@ -297,22 +323,22 @@
               <tr style="height:80px; Word-break:break-all;">
                 <td style="font-size: 10px; Word-break:break-all;" colspan="2">
                   <div class="digital-stamp-content">
-                    <span t-esc="state.sello_sat"/>
+                    <span t-esc="invoice_cfdinfo.sello_sat"/>
                   </div>
                 </td>
               </tr>
             </t>
           </t>
 
-          <t t-if="'datos_certificacion' in state">
-            <t t-if="state.sello_digital_cfdi">
+          <t t-if="'datos_certificacion' in invoice_cfdinfo">
+            <t t-if="invoice_cfdinfo.sello_digital_cfdi">
               <tr style="height:35px;">
                 <th style="color:black; font-size: 12px;" colspan="2">SELLO DIGITAL DEL CFDI: </th>
               </tr>
 
               <tr style="height:80px; Word-break:break-all;">
                 <td style="font-size: 10px; Word-break:break-all;" colspan="2">
-                  <span t-esc="state.sello_digital_cfdi"/>
+                  <span t-esc="invoice_cfdinfo.sello_digital_cfdi"/>
                 </td>
               </tr>
             </t>
@@ -322,14 +348,14 @@
             <th style="font-size: 10px;" align="center" colspan="2"></th>
           </tr>
 
-          <t t-if="'datos_certificacion' in state">
-            <t t-if="state.vat || state.folio_fiscal || state.certificado_sat || state.datos_certificacion.sello_sat">
+          <t t-if="'datos_certificacion' in invoice_cfdinfo">
+            <t t-if="invoice_cfdinfo.vat || invoice_cfdinfo.folio_fiscal || invoice_cfdinfo.certificado_sat || invoice_cfdinfo.sello_sat">
               <tr style="height:35px;">
                 <th style="font-size: 10px;" align="center" colspan="2">Este documento es una representacion impresa de un CFDI, los datos que no se muestran, estan contenidos en el XML </th>
               </tr>
             </t>
           </t>
-          
+
 
 
         </table>

@@ -27,24 +27,41 @@ class Picking(models.Model):
         vat_empresa = None
         monto_total = None
         vat_usuario = None
+        serie = None
+        folio = None
+        uso_cfdi = None
         if factura_id:
             if factura_id.state == 'posted':
                 factura_id._l10n_mx_edi_decode_cfdi()
                 logging.warning(factura_id._l10n_mx_edi_decode_cfdi())
+                decode_cfdi = factura_id._l10n_mx_edi_decode_cfdi()
+                logging.warning(self.env['account.edi.format']._l10n_mx_edi_get_common_cfdi_values(factura_id))
+                logging.warning('datos comunes')
+                sf = self.env['account.edi.format']._l10n_mx_edi_get_serie_and_folio(factura_id)
+                logging.warning(sf)
                 if factura_id._l10n_mx_edi_decode_cfdi():
-                    regimen_fiscal = factura_id._l10n_mx_edi_decode_cfdi()['fiscal_regime']
-                    sello_sat = factura_id._l10n_mx_edi_decode_cfdi()['sello_sat']
-                    certificado_sat = factura_id._l10n_mx_edi_decode_cfdi()['certificate_sat_number']
-                    fecha_certificacion = factura_id._l10n_mx_edi_decode_cfdi()['emission_date_str']
-                    folio_fiscal = factura_id._l10n_mx_edi_decode_cfdi()['uuid']
-                    cadena_original = factura_id._l10n_mx_edi_decode_cfdi()['cadena']
-                    sello_digital_cfdi = factura_id._l10n_mx_edi_decode_cfdi()['sello']
+                    regimen_fiscal = decode_cfdi['fiscal_regime']
+                    sello_sat = decode_cfdi['sello_sat']
+                    certificado_sat = decode_cfdi['certificate_sat_number']
+                    fecha_certificacion = decode_cfdi['emission_date_str']
+                    folio_fiscal = decode_cfdi['uuid']
+                    cadena_original = decode_cfdi['cadena']
+                    sello_digital_cfdi = decode_cfdi['sello']
                     logging.warning('Pago total en texto')
-                    logging.warning(factura_id._l10n_mx_edi_cfdi_amount_to_text())
+                    # logging.warning(factura_id._l10n_mx_edi_cfdi_amount_to_text())
                     total_letras = factura_id._l10n_mx_edi_cfdi_amount_to_text()
-                    vat_empresa = factura_id._l10n_mx_edi_decode_cfdi()['supplier_rfc']
-                    vat_usuario = factura_id._l10n_mx_edi_decode_cfdi()['customer_rfc']
-                    monto_total = factura_id._l10n_mx_edi_decode_cfdi()['amount_total']
+                    vat_empresa = decode_cfdi['supplier_rfc']
+                    vat_usuario = decode_cfdi['customer_rfc']
+                    monto_total = decode_cfdi['amount_total']
+                    serie = sf['serie_number']
+                    folio = sf['folio_number']
+                    uso_cfdi = factura_id.partner_id.l10n_mx_edi_fiscal_regime if factura_id.partner_id.l10n_mx_edi_fiscal_regime else False
+                    if uso_cfdi:
+                        uso_cfdi = dict(self.env['res.partner']._fields['l10n_mx_edi_fiscal_regime'].selection).get(factura_id.partner_id.l10n_mx_edi_fiscal_regime)
+                        regimen_fiscal = dict(self.env['res.partner']._fields['l10n_mx_edi_fiscal_regime'].selection).get(factura_id.partner_id.l10n_mx_edi_fiscal_regime)
+
+
+
         # if factura_id:
         #     cadena_original = factura_id._get_l10n_mx_edi_cadena()
         #     total_letras = factura_id.l10n_mx_edi_amount_to_text()
@@ -64,6 +81,9 @@ class Picking(models.Model):
             'sello_sat': sello_sat,
             'sello_digital_cfdi': sello_digital_cfdi,
             'monto_total': monto_total,
+            'serie': serie,
+            'folio': folio,
+            'uso_cfdi': uso_cfdi,
         }
         return datos_factura
 
