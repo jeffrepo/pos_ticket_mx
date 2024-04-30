@@ -42,7 +42,7 @@ odoo.define('pos_ticket_mx.OrderReceipt', function(require) {
           async willStart(){
             // var self = this;
             var order = this.env.pos.get_order();
-            var descuento = 10;
+            var descuento = 0;
             const invoice_cfdinfo = this._invoice_cfdinfo;
             // console.log('receiptenv.order.orderlines')
             // console.log(receiptenv.order.orderlines)
