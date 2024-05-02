@@ -92,7 +92,7 @@ class Picking(models.Model):
         logging.warning('POST')
         res = super()._post(soft)
         logging.warning('intentar _POST')
-        res.action_process_edi_web_services();
+        # res.action_process_edi_web_services();
         return res
 
 
