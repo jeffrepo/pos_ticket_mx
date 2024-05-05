@@ -41,6 +41,13 @@ class Picking(models.Model):
             return False
 
 
+    def _prepare_invoice_line(self, order_line):
+        res = super(PosOrder, self)._prepare_invoice_line(order_line)
+        if res:
+            res['pedido_referencia'] = order_line.order_id.name
+            res['sesion_id'] = order_line.order_id.session_id.id
+        return res
+
 class PosOrder(models.Model):
     _inherit = "pos.order"
 
