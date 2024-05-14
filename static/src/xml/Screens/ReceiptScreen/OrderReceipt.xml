@@ -234,14 +234,26 @@
             <td >Tipo de pago: </td>
           </tr>
 
-          <tr t-foreach="receipt.paymentlines" t-as="line">
-            <td></td>
-            <td  t-esc="line.name">  </td>
+          <tr t-foreach="receipt.paymentlines" t-as="line" t-key="line.cid">
+              <td></td>
+              <td><t t-esc="line.name" /></td>
+              <td>
+                  <span t-esc="env.pos.format_currency_no_symbol(line.amount)" class="pos-receipt-right-align"/>
+              </td>
           </tr>
+          <br/>
 
+          <tr>
+              <td></td>
+              <td>CAMBIO</td>
+              <td><span t-esc="env.pos.format_currency(receipt.change)" class="pos-receipt-right-align"/></td>
+          </tr>
+          <br/>
 
         </table>
-        <div><strong>PUE - Pago en una sola exhibición</strong></div>
+        <t t-if="invoice_cfdinfo.certificado_sat">
+            <div><strong>PUE - Pago en una sola exhibición</strong></div>
+        </t>
         <table style="width:100%;">
 
           <tr style="height:35px;">
