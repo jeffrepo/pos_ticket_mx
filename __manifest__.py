@@ -18,6 +18,7 @@
 
     'data': [
         # 'views/templates.xml',
+        'views/pos_config_view.xml',
     ],
     'assets':{
         'point_of_sale.assets': [

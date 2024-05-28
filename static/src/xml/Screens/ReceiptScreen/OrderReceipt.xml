@@ -134,8 +134,10 @@
           </div>
 
           <tr style="height:35px;">
-            <th style="color:black; " colspan="2">Expedido en:</th>
+            <td style="color:black; " colspan="2"><strong>Expedido en:</strong> </td>
+
           </tr>
+            <div class="pos-receipt-contact"><span t-esc="receiptEnv.order.pos.config.direccion"/></div>
           <br></br>
           <tr>
             <th style="color:black; height:0.30cms" colspan="4" align="center"></th>
