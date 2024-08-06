@@ -50,7 +50,12 @@
           </t>
           <tr style="height:10px;">
             <div class="pos-receipt-order-data">
-              <td  t-esc="receipt.date.localestring"></td>
+                 <t t-if="receipt.date.localestring">
+                    <td><t t-esc="receipt.date.localestring" /></td>
+                </t>
+                <t t-else="">
+                    <td><t t-esc="receipt.date.validation_date" /></td>
+                </t>
             </div>
             <td></td>
             <!-- <t t-if="'datos_certificacion' in state">
