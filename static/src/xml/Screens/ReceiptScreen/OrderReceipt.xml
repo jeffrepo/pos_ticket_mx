@@ -64,7 +64,20 @@
               </t>
             </t> -->
           </tr>
-
+          <tr>
+              <td>
+                  <strong>Sucursal</strong><br/>
+                  <span t-esc="invoice_cfdinfo.sucursal"/>
+              </td>
+                  
+          </tr>
+            
+          <tr>
+              <td>
+                  <strong>Cajero</strong><br/> 
+                  <span t-esc="invoice_cfdinfo.cajero"/>
+              </td>
+          </tr>    
           <tr>
             <th style="color:black; height:50" colspan="3" align="center"></th>
           </tr>
