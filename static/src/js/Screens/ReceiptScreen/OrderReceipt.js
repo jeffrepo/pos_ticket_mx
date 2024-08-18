@@ -19,7 +19,7 @@ odoo.define('pos_ticket_mx.OrderReceipt', function(require) {
           console.log(this)
           this._invoice_cfdinfo = {
                 'sucursal': this.env.pos.config.invoice_journal_id[1],
-                'cajero': this.env.pos.employee.name,
+                'cajero': this.env.pos.attributes.cashier.name,
                 'qr_string': false,
                 'total_letras':false,
                 'sello_sat':false,
