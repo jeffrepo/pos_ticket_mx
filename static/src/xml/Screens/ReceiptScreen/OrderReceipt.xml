@@ -181,28 +181,30 @@
             <t t-if="l.price > 0">
               <td  align="center"><span t-esc="l.quantity"/></td>
               <td><span t-esc="l.product_name_wrapped[0]"/>
-                  <t t-if="l.is_combo_product">
-                      <t t-set="wk_val" t-value="0"/>
-                      <t t-foreach='l.sel_combo_prod' t-as='product' t-key="product.id">
-                          <t t-if="env.pos.config.combo_popup_view == 'list'">
-                              <t t-set="combo_qty" t-value="l.temp_arr" />
-                          </t>
-                          <t t-else="">
-                              <t t-set="combo_qty" t-value="l.grid_temp_arr" />
-                          </t>
-                          <t t-if="product">
-                              <div class="pos-receipt-left-padding combo_wk_wrapped" style="font-style:italic;font-size:12px;">
-                                  <div style="margin-left:10px;">
-                                      <em>
-                                          +
-                                          <t t-esc="product['combo_qty']"/>
-                                          <t t-esc="product.name"  />@ <span><t t-esc="env.pos.format_currency(product.price,'Product Price')" /></span>
-                                      </em>   
-                                  </div>                        
-                              </div>
+                  <span>
+                      <t t-if="l.is_combo_product">
+                          <t t-set="wk_val" t-value="0"/>
+                          <t t-foreach='l.sel_combo_prod' t-as='product' t-key="product.id">
+                              <t t-if="env.pos.config.combo_popup_view == 'list'">
+                                  <t t-set="combo_qty" t-value="l.temp_arr" />
+                              </t>
+                              <t t-else="">
+                                  <t t-set="combo_qty" t-value="l.grid_temp_arr" />
+                              </t>
+                              <t t-if="product">
+                                  <div class="pos-receipt-left-padding combo_wk_wrapped" style="font-style:italic;font-size:16px;">
+                                      <div style="margin-left:10px;">
+                                          <em>
+                                              +
+                                              <t t-esc="product['combo_qty']"/>
+                                              <t t-esc="product.name"  />@ <span><t t-esc="env.pos.format_currency(product.price,'Product Price')" /></span>
+                                          </em>   
+                                      </div>                        
+                                  </div>
+                              </t>
                           </t>
                       </t>
-                  </t>
+                  </span>
               </td>     
               <td align="right"><span t-esc="env.pos.format_currency_no_symbol(l.price)" /></td>
               <td  align="right"><span t-esc="(l.quantity*l.price).toFixed(2)"/></td>
