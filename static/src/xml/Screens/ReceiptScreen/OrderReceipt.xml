@@ -192,7 +192,7 @@
                                   <t t-set="combo_qty" t-value="l.grid_temp_arr" />
                               </t>
                               <t t-if="product">
-                                  <div class="pos-receipt-left-padding combo_wk_wrapped" style="font-style:italic;font-size:16px;">
+                                  <div class="pos-receipt-left-padding combo_wk_wrapped" style=";font-size:18px;">
                                       <div style="margin-left:10px;">
                                           <em>
                                               +
