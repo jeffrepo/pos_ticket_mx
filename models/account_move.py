@@ -87,13 +87,13 @@ class Picking(models.Model):
         }
         return datos_factura
 
-    def _post(self, soft=True):
-        #Funcion heredada y creada para activar el boton de "process now"
-        logging.warning('POST')
-        res = super()._post(soft)
-        logging.warning('intentar _POST')
-        # res.action_process_edi_web_services();
-        return res
+    # def _post(self, soft=True):
+    #     #Funcion heredada y creada para activar el boton de "process now"
+    #     logging.warning('POST')
+    #     res = super()._post(soft)
+    #     logging.warning('intentar _POST')
+    #     # res.action_process_edi_web_services();
+    #     return res
 
 
     def letras_numeros (self, id_pedido):
