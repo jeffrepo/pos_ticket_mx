@@ -254,37 +254,12 @@
             <td  align="right"><span t-esc="env.pos.format_currency(receipt.subtotal)"/></td>
           </tr>
 
-            <t t-if="!isTaxIncluded">
-                <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
-                    <tr>
-                        <td></td>
-                        <td><t t-esc="tax.name" /></td>
-                        <td><span t-esc='env.pos.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/></td>
-                    </tr>
-                </t>
-            </t>
-            
-            <!-- <t t-if="isTaxIncluded">
-                <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
-                    <div>
-                        <t t-esc="tax.name" />
-                        <span t-esc="env.pos.format_currency_no_symbol(tax.amount)" class="pos-receipt-right-align"/>
-                    </div>
-                </t>
-                <div>
-                    Total Taxes
-                    <span t-esc="env.pos.format_currency(receipt.total_tax)" class="pos-receipt-right-align"/>
-                </div>
-            </t> -->
-            
-
-
-          <!-- <tr>
+          <tr>
             <td></td>
             <td style="color:black; ">  I.V.A. 16%: </td>
             <td  align="right"><span t-esc="env.pos.format_currency(receipt.total_tax)"/></td>
           </tr>
- -->
+
           <tr>
             <td></td>
             <td colspan="2"><hr></hr></td>
