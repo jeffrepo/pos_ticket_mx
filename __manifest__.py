@@ -17,7 +17,9 @@
     'depends': ['point_of_sale'],
 
     'data': [
+
         # 'views/templates.xml',
+        
     ],
     'assets':{
         'point_of_sale.assets': [
