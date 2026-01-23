@@ -51,10 +51,17 @@
           <tr style="height:10px;">
             <div class="pos-receipt-order-data">
                  <t t-if="receipt.date.localestring">
+<<<<<<< HEAD
                         <div><t t-esc="receipt.date.localestring" /></div>
                 </t>
                 <t t-else="">
                     <div><t t-esc="receipt.date.validation_date" /></div>
+=======
+                    <td><t t-esc="receipt.date.localestring" /></td>
+                </t>
+                <t t-else="">
+                    <td><t t-esc="receipt.date.validation_date" /></td>
+>>>>>>> 6b16405d8ecd65df612173c944c87e8edccdcbce
                 </t>
             </div>
             <td></td>
@@ -64,7 +71,20 @@
               </t>
             </t> -->
           </tr>
-
+          <tr>
+              <td>
+                  <strong>Sucursal</strong><br/>
+                  <span t-esc="invoice_cfdinfo.sucursal"/>
+              </td>
+                  
+          </tr>
+            
+          <tr>
+              <td>
+                  <strong>Cajero</strong><br/> 
+                  <span t-esc="invoice_cfdinfo.cajero"/>
+              </td>
+          </tr>    
           <tr>
             <th style="color:black; height:50" colspan="3" align="center"></th>
           </tr>
@@ -167,12 +187,39 @@
           <tr t-foreach="receipt.orderlines" t-as="l">
             <t t-if="l.price > 0">
               <td  align="center"><span t-esc="l.quantity"/></td>
+<<<<<<< HEAD
               <td ><span t-esc="l.product_name_wrapped[0]"/></td>
+=======
+              <td><span t-esc="l.product_name_wrapped[0]"/>
+                  <span>
+                      <t t-if="l.is_combo_product">
+                          <t t-set="wk_val" t-value="0"/>
+                          <t t-foreach='l.sel_combo_prod' t-as='product' t-key="product.id">
+                              <t t-if="env.pos.config.combo_popup_view == 'list'">
+                                  <t t-set="combo_qty" t-value="l.temp_arr" />
+                              </t>
+                              <t t-else="">
+                                  <t t-set="combo_qty" t-value="l.grid_temp_arr" />
+                              </t>
+                              <t t-if="product">
+                                  <div class="pos-receipt-left-padding combo_wk_wrapped" style=";font-size:22px;">
+                                      <div style="margin-left:10px;">
+                                          <em>
+                                              +
+                                              <t t-esc="product['combo_qty']"/>
+                                              <t t-esc="product.name"  />@ <span><t t-esc="env.pos.format_currency(product.price,'Product Price')" /></span>
+                                          </em>   
+                                      </div>                        
+                                  </div>
+                              </t>
+                          </t>
+                      </t>
+                  </span>
+              </td>     
+>>>>>>> 6b16405d8ecd65df612173c944c87e8edccdcbce
               <td align="right"><span t-esc="env.pos.format_currency_no_symbol(l.price)" /></td>
               <td  align="right"><span t-esc="(l.quantity*l.price).toFixed(2)"/></td>
             </t>
-
-
 
           </tr>
 
@@ -218,12 +265,37 @@
             <td  align="right"><span t-esc="env.pos.format_currency(receipt.subtotal)"/></td>
           </tr>
 
-          <tr>
+            <t t-if="!isTaxIncluded">
+                <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
+                    <tr>
+                        <td></td>
+                        <td><t t-esc="tax.name" /></td>
+                        <td><span t-esc='env.pos.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/></td>
+                    </tr>
+                </t>
+            </t>
+            
+            <!-- <t t-if="isTaxIncluded">
+                <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
+                    <div>
+                        <t t-esc="tax.name" />
+                        <span t-esc="env.pos.format_currency_no_symbol(tax.amount)" class="pos-receipt-right-align"/>
+                    </div>
+                </t>
+                <div>
+                    Total Taxes
+                    <span t-esc="env.pos.format_currency(receipt.total_tax)" class="pos-receipt-right-align"/>
+                </div>
+            </t> -->
+            
+
+
+          <!-- <tr>
             <td></td>
             <td style="color:black; ">  I.V.A. 16%: </td>
             <td  align="right"><span t-esc="env.pos.format_currency(receipt.total_tax)"/></td>
           </tr>
-
+ -->
           <tr>
             <td></td>
             <td colspan="2"><hr></hr></td>
@@ -378,7 +450,17 @@
 
 
         </table>
-
+        <div class="before-footer"/>
+        <!--  Footer  -->
+        <div t-if="receipt.footer_html" class="pos-receipt-center-align">
+        <t t-raw="receipt.footer_html"/>
+        </div>
+        <div t-if="!receipt.footer_html and receipt.footer" class="pos-receipt-center-align" style="white-space:pre-line">
+        <br/>
+        <t t-esc="receipt.footer"/>
+        <br/>
+        <br/>
+        </div>
       </div>
 
     </xpath>

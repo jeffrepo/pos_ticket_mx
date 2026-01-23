@@ -19,7 +19,11 @@
     'data': [
 
         # 'views/templates.xml',
+<<<<<<< HEAD
         
+=======
+        'views/pos_config_view.xml',
+>>>>>>> 6b16405d8ecd65df612173c944c87e8edccdcbce
     ],
     'assets':{
         'point_of_sale.assets': [
