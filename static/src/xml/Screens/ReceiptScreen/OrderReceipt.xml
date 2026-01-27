@@ -51,10 +51,17 @@
           <tr style="height:10px;">
             <div class="pos-receipt-order-data">
                  <t t-if="receipt.date.localestring">
+<<<<<<< HEAD
+                        <div><t t-esc="receipt.date.localestring" /></div>
+                </t>
+                <t t-else="">
+                    <div><t t-esc="receipt.date.validation_date" /></div>
+=======
                     <td><t t-esc="receipt.date.localestring" /></td>
                 </t>
                 <t t-else="">
                     <td><t t-esc="receipt.date.validation_date" /></td>
+>>>>>>> 6b16405d8ecd65df612173c944c87e8edccdcbce
                 </t>
             </div>
             <td></td>
@@ -180,6 +187,9 @@
           <tr t-foreach="receipt.orderlines" t-as="l">
             <t t-if="l.price > 0">
               <td  align="center"><span t-esc="l.quantity"/></td>
+<<<<<<< HEAD
+              <td ><span t-esc="l.product_name_wrapped[0]"/></td>
+=======
               <td><span t-esc="l.product_name_wrapped[0]"/>
                   <span>
                       <t t-if="l.is_combo_product">
@@ -206,6 +216,7 @@
                       </t>
                   </span>
               </td>     
+>>>>>>> 6b16405d8ecd65df612173c944c87e8edccdcbce
               <td align="right"><span t-esc="env.pos.format_currency_no_symbol(l.price)" /></td>
               <td  align="right"><span t-esc="(l.quantity*l.price).toFixed(2)"/></td>
             </t>
