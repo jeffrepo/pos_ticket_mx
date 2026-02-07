@@ -10,7 +10,7 @@
                 <div class="row mt16 o_settings_container">
                         <div class="col-xs-12 col-lg-6 o_setting_box" id="direccion">
                             <div class="o_setting_right_pane">
-                                <label for="iface_tax_included" string="Direccion sucursal"/>
+                                <label for="direccion" string="Direccion sucursal"/>
                                 <div class="text-muted">
                                     Dirección para sucursal
                                 </div>
@@ -18,7 +18,7 @@
                                     <div class="mt16">
                                         <field name="direccion" class="o_light_label"/>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
