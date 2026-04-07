@@ -19,16 +19,16 @@
     'data': [
         #'views/templates.xml',
     ],
-    'assets':{
-        # 'point_of_sale.assets': [
-        #     'pos_ticket_mx/static/src/css/pos_ticket_mx.css',
-        #     'pos_ticket_mx/static/src/js/qrcode.js',
-        #     'pos_ticket_mx/static/src/js/Screens/ReceiptScreen/OrderReceipt.js',
-        #     'pos_ticket_mx/static/src/js/models.js',
-        # ],
-        # 'web.assets_qweb':[
-        #     'pos_ticket_mx/static/src/xml/**/*',
-        # ],
+    'assets': {
+        'point_of_sale._assets_pos': [
+            # XML
+            'pos_ticket_mx/static/src/app/screens/receipt_screen/receipt/receipt_header/receipt_header.xml',
+            'pos_ticket_mx/static/src/app/screens/receipt_screen/receipt/order_receipt.xml',
+            'pos_ticket_mx/static/src/app/screens/receipt_screen/receipt/order_receipt.js',
+            'pos_ticket_mx/static/src/js/pos_receipt_cfdi.js',
+            'pos_ticket_mx/static/src/js/payment_cfdi_fetch.js',
+            'pos_ticket_mx/static/src/xml/pos_ticket_cfdi.xml',
+        ],
     },
     'license': 'LGPL-3',
 
