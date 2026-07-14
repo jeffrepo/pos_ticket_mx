@@ -135,9 +135,9 @@
                 <table style="width:100%;">
                     <t t-if="showOnlineInvoiceQr">
                         <tr>
-                            <td style="width:100px; padding:10px" rowspan="12" colspan="2" class="barcode col-3">
+                            <td style="width:92px; max-width:92px; padding:4px" rowspan="12" class="barcode">
                                 <div class="text-center">
-                                    <img alt="Barcode" t-att-src="order.getOnlineInvoiceBarcodeSrc()"/>
+                                    <img alt="Barcode" style="width:90px; height:90px;" t-att-src="order.getOnlineInvoiceBarcodeSrc()"/>
                                     <div style="font-size: 9px; line-height: 1.2;" t-esc="order.getOnlineInvoicePortalUrl()"/>
                                 </div>
                             </td>
@@ -145,18 +145,18 @@
                     </t>
                     <t t-if="showCfdiQr and mx_cfdi.extra_values and mx_cfdi.extra_values.barcode_src">
                         <tr>
-                            <td style="width:100px; padding:10px" rowspan="12" colspan="2" class="barcode col-3">
+                            <td style="width:92px; max-width:92px; padding:4px" rowspan="12" class="barcode">
                                 <div class="text-center">
-                                    <img alt="Barcode" t-att-src="mx_cfdi.extra_values.barcode_src"/>
+                                    <img alt="Barcode" style="width:90px; height:90px;" t-att-src="mx_cfdi.extra_values.barcode_src"/>
                                 </div>
                             </td>
                         </tr>
                     </t>
                     <t t-elif="showCfdiQr and mx_cfdi.barcode_src">
                         <tr>
-                            <td style="width:100px; padding:10px" rowspan="12" colspan="2" class="barcode col-3">
+                            <td style="width:92px; max-width:92px; padding:4px" rowspan="12" class="barcode">
                                 <div class="text-center">
-                                    <img alt="Barcode" t-att-src="mx_cfdi.barcode_src"/>
+                                    <img alt="Barcode" style="width:90px; height:90px;" t-att-src="mx_cfdi.barcode_src"/>
                                 </div>
                             </td>
                         </tr>

@@ -26,7 +26,7 @@ patch(PosOrder.prototype, {
 
     getOnlineInvoiceBarcodeSrc() {
         const barcodeValue = encodeURIComponent(this.getOnlineInvoicePortalUrl());
-        return `/report/barcode/?barcode_type=QR&value=${barcodeValue}&width=180&height=180`;
+        return `/report/barcode/?barcode_type=QR&value=${barcodeValue}&width=120&height=120`;
     },
 
     serializeForORM(opts = {}) {
