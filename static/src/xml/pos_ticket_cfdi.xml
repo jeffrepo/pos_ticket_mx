@@ -8,8 +8,6 @@
             <t t-set="partner" t-value="order.getPartner()"/>
             <t t-set="showOnlineInvoiceQr" t-value="order.isMxInvoiceOnline()"/>
             <t t-set="showCfdiQr" t-value="!showOnlineInvoiceQr and order.isToInvoice() and mx_cfdi and mx_cfdi.extra_values and mx_cfdi.extra_values.barcode_src"/>
-
-            <br/>
             <div class="pos-receipt p-2">
                 <t t-if="order.company.logo">
                     <img class="pos-receipt-logo" t-att-src="order.company.logo" alt="Logo"/>
