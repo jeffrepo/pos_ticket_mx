@@ -36,7 +36,7 @@ patch(OrderPaymentValidation.prototype, {
                     "get_mx_cfdi_ticket_data_by_uuid",
                     [order.uuid]
                 );
-                if (data?.extra_values?.barcode_src) {
+                if (data?.barcode_src || data?.extra_values?.barcode_src) {
                     order.mx_cfdi = data;
                     return;
                 }

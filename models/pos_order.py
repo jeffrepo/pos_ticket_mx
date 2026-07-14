@@ -110,6 +110,7 @@ class PosOrder(models.Model):
             "cantidad_letra": cantidad_letra or "",
             "sello_digital_cfdi": sello_digital_cfdi or "",
             "sello_digital_sat": sello_digital_sat or "",
+            "barcode_src": extra_values["barcode_src"],
             "extra_values": extra_values or "",
         }
     
