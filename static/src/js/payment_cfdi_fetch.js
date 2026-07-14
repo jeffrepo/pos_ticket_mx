@@ -10,9 +10,6 @@ async function loadMxCfdiTicketData(pos, order) {
     if (!order || order.isMxInvoiceOnline?.()) {
         return;
     }
-    if (!order.isToInvoice?.() && !order.raw?.account_move) {
-        return;
-    }
 
     for (let attempt = 0; attempt < 4; attempt++) {
         try {
