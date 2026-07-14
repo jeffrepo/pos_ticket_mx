@@ -7,7 +7,7 @@
             <t t-set="mx_cfdi" t-value="props.data?.mx_cfdi || order?.mx_cfdi"/>
             <t t-set="partner" t-value="order.getPartner()"/>
             <t t-set="showOnlineInvoiceQr" t-value="order.isMxInvoiceOnline()"/>
-            <t t-set="showCfdiQr" t-value="!showOnlineInvoiceQr and order.isToInvoice() and mx_cfdi and mx_cfdi.extra_values and mx_cfdi.extra_values.barcode_src"/>
+            <t t-set="showCfdiQr" t-value="!showOnlineInvoiceQr and mx_cfdi and mx_cfdi.extra_values and mx_cfdi.extra_values.barcode_src"/>
             <div class="pos-receipt p-2">
                 <t t-if="order.company.logo">
                     <img class="pos-receipt-logo" t-att-src="order.company.logo" alt="Logo"/>

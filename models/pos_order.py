@@ -4,6 +4,7 @@ from odoo.exceptions import UserError
 import logging
 _logger = logging.getLogger(__name__)
 import re
+from urllib.parse import urlencode, quote_plus
 
 
 
@@ -33,6 +34,20 @@ class PosOrder(models.Model):
     #     barcode_src = f'/report/barcode/?barcode_type=QR&value={barcode_value}&width=180&height=180'
 
     #     return barcode_src
+
+    def _get_mx_cfdi_barcode_src(self, move, cfdi_value):
+        barcode_value_params = urlencode({
+            "id": move.l10n_mx_edi_cfdi_uuid or "",
+            "re": (move.company_id.vat or "").strip(),
+            "rr": (move.partner_id.vat or "").strip(),
+            "tt": "%.6f" % move.amount_total,
+        })
+        barcode_sello = quote_plus((cfdi_value.get("sello") or "")[-8:], safe="=/").replace("%2B", "+")
+        barcode_value = quote_plus(
+            "https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?%s&fe=%s"
+            % (barcode_value_params, barcode_sello)
+        )
+        return "/report/barcode/?barcode_type=QR&value=%s&width=180&height=180" % barcode_value
     
     @api.model
     def get_mx_cfdi_ticket_data_by_uuid(self, uuid):
@@ -67,6 +82,10 @@ class PosOrder(models.Model):
         forma = ""
         cantidad_letra = move.amount_total_words
         extra_values = move._l10n_mx_edi_get_extra_common_report_values()
+        extra_values = extra_values if isinstance(extra_values, dict) else {}
+        extra_values["barcode_src"] = (
+            extra_values.get("barcode_src") or self._get_mx_cfdi_barcode_src(move, cfdi_value)
+        )
         logging.warning(extra_values)
         if not extra_values or not extra_values.get("barcode_src"):
             return {}
