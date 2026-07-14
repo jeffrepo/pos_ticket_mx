@@ -2,6 +2,7 @@
 
 import { patch } from "@web/core/utils/patch";
 import { PaymentScreen } from "@point_of_sale/app/screens/payment_screen/payment_screen";
+import OrderPaymentValidation from "@point_of_sale/app/utils/order_payment_validation";
 
 patch(PaymentScreen.prototype, {
     toggleMxInvoiceOnline() {
@@ -12,23 +13,30 @@ patch(PaymentScreen.prototype, {
         return this.currentOrder.isMxInvoiceOnline();
     },
 
-    async _finalizeValidation() {
-        await super._finalizeValidation(...arguments);
+});
 
-        // Ya con la orden sincronizada, pide los datos CFDI cuando aplica.
+patch(OrderPaymentValidation.prototype, {
+    async afterOrderValidation() {
+        await this.loadMxCfdiTicketData();
+        return await super.afterOrderValidation(...arguments);
+    },
+
+    async loadMxCfdiTicketData() {
+        const order = this.order;
+        if (!order?.isToInvoice() || order.isMxInvoiceOnline?.()) {
+            return;
+        }
+
         try {
-            const order = this.currentOrder;
-            const uuid = order.uuid;
-            const data = await this.env.services.orm.call(
+            const data = await this.pos.data.call(
                 "pos.order",
                 "get_mx_cfdi_ticket_data_by_uuid",
-                [uuid]
+                [order.uuid]
             );
             order.mx_cfdi = data || null;
         } catch (e) {
             // No rompas el flujo si falla obtener datos
             // (el ticket se imprimirá sin los extras)
         }
-
     },
 });
