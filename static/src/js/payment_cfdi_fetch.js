@@ -3,6 +3,7 @@
 import { patch } from "@web/core/utils/patch";
 import { PaymentScreen } from "@point_of_sale/app/screens/payment_screen/payment_screen";
 import { PosStore } from "@point_of_sale/app/services/pos_store";
+import OrderPaymentValidation from "@point_of_sale/app/utils/order_payment_validation";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -22,7 +23,9 @@ async function loadMxCfdiTicketData(pos, order) {
                 order.mx_cfdi = data;
                 return;
             }
-            order.mx_cfdi = data || null;
+            if (data && Object.keys(data).length) {
+                order.mx_cfdi = data;
+            }
         } catch (e) {
             // No rompas el flujo si falla obtener datos.
         }
@@ -39,6 +42,19 @@ patch(PaymentScreen.prototype, {
         return this.currentOrder.isMxInvoiceOnline();
     },
 
+    async _finalizeValidation() {
+        if (super._finalizeValidation) {
+            await super._finalizeValidation(...arguments);
+        }
+        await loadMxCfdiTicketData(this.pos, this.currentOrder);
+    },
+});
+
+patch(OrderPaymentValidation.prototype, {
+    async afterOrderValidation() {
+        await loadMxCfdiTicketData(this.pos, this.order);
+        return await super.afterOrderValidation(...arguments);
+    },
 });
 
 patch(PosStore.prototype, {
