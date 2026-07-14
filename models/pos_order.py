@@ -116,14 +116,37 @@ class PosOrder(models.Model):
                 "[pos_ticket_mx][cfdi] return empty: no order/account_move identifier=%s", uuid
             )
             return {}
-        move = order.account_move
+        order = order.sudo()
+        move = order.account_move.sudo()
         if not move.l10n_mx_edi_cfdi_uuid:
             _logger.warning(
                 "[pos_ticket_mx][cfdi] return empty: move has no CFDI uuid move=%s state=%s cfdi_state=%s",
                 move.id, move.state, getattr(move, "l10n_mx_edi_cfdi_state", None),
             )
             return {}
-        cfdi_value = order.account_move._l10n_mx_edi_get_extra_invoice_report_values()
+
+        decoded_cfdi = {}
+        try:
+            decoded_cfdi = move._l10n_mx_edi_decode_cfdi() or {}
+        except Exception:
+            _logger.exception("[pos_ticket_mx][cfdi] decode CFDI failed move=%s", move.id)
+
+        try:
+            cfdi_value = move._l10n_mx_edi_get_extra_invoice_report_values() or {}
+        except Exception:
+            _logger.exception(
+                "[pos_ticket_mx][cfdi] extra invoice values failed move=%s", move.id
+            )
+            cfdi_value = {}
+        if not isinstance(cfdi_value, dict):
+            cfdi_value = {}
+        cfdi_value.setdefault("sello", decoded_cfdi.get("sello") or "")
+        cfdi_value.setdefault("sello_sat", decoded_cfdi.get("sello_sat") or "")
+        cfdi_value.setdefault("cadena", decoded_cfdi.get("cadena") or "")
+        cfdi_value.setdefault(
+            "certificate_sat_number", decoded_cfdi.get("certificate_sat_number") or ""
+        )
+        cfdi_value.setdefault("stamp_date", decoded_cfdi.get("emission_date_str") or "")
         _logger.warning(
             "[pos_ticket_mx][cfdi] extra invoice values keys=%s",
             list(cfdi_value.keys()) if isinstance(cfdi_value, dict) else cfdi_value,
@@ -131,7 +154,7 @@ class PosOrder(models.Model):
         if not cfdi_value:
             _logger.warning("[pos_ticket_mx][cfdi] return empty: no extra invoice values")
             return {}
-        partner = move.partner_id
+        partner = move.partner_id.sudo()
         no_cert_sat = getattr(move, "l10n_mx_edi_sat_cert_number", False) or ""
         no_cert_emisor = getattr(move, "l10n_mx_edi_cfdi_cert_number", False) or ""
         fecha_certificacion = cfdi_value.get("stamp_date") or ""
@@ -147,7 +170,11 @@ class PosOrder(models.Model):
         sello_digital_sat = cfdi_value.get("sello_sat") or ""
         forma = ""
         cantidad_letra = self._get_mx_cfdi_amount_to_text(order, move)
-        extra_values = move._l10n_mx_edi_get_extra_common_report_values()
+        try:
+            extra_values = move._l10n_mx_edi_get_extra_common_report_values()
+        except Exception:
+            _logger.exception("[pos_ticket_mx][cfdi] extra common values failed move=%s", move.id)
+            extra_values = {}
         extra_values = extra_values if isinstance(extra_values, dict) else {}
         extra_values["barcode_src"] = (
             extra_values.get("barcode_src") or self._get_mx_cfdi_barcode_src(move, cfdi_value)
