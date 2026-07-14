@@ -11,6 +11,9 @@ async function loadMxCfdiTicketData(pos, order) {
     if (!order || order.isMxInvoiceOnline?.()) {
         return;
     }
+    if (!order.isToInvoice?.()) {
+        return;
+    }
 
     const identifiers = [
         order.id,
@@ -44,11 +47,22 @@ async function loadMxCfdiTicketData(pos, order) {
 
 patch(PaymentScreen.prototype, {
     toggleMxInvoiceOnline() {
-        this.currentOrder.setMxInvoiceOnline(!this.currentOrder.isMxInvoiceOnline());
+        const enableOnlineInvoice = !this.currentOrder.isMxInvoiceOnline();
+        this.currentOrder.setMxInvoiceOnline(enableOnlineInvoice);
+        if (enableOnlineInvoice && this.currentOrder.isToInvoice()) {
+            this.currentOrder.setToInvoice(false);
+        }
     },
 
     isMxInvoiceOnline() {
         return this.currentOrder.isMxInvoiceOnline();
+    },
+
+    async toggleIsToInvoice() {
+        await super.toggleIsToInvoice(...arguments);
+        if (this.currentOrder.isToInvoice() && this.currentOrder.isMxInvoiceOnline()) {
+            this.currentOrder.setMxInvoiceOnline(false);
+        }
     },
 
     async _finalizeValidation() {
