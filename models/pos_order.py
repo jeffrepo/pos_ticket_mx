@@ -18,9 +18,11 @@ class PosOrder(models.Model):
     @api.model
     def _get_pos_order_for_cfdi_ticket(self, identifier):
         if not identifier:
+            _logger.warning("[pos_ticket_mx][cfdi] empty identifier")
             return self.browse()
 
         identifier = str(identifier)
+        _logger.warning("[pos_ticket_mx][cfdi] searching pos.order identifier=%s", identifier)
         order = self.search([
             "|", "|",
             ("uuid", "=", identifier),
@@ -28,13 +30,22 @@ class PosOrder(models.Model):
             ("name", "=", identifier),
         ], limit=1, order="id desc")
         if order:
+            _logger.warning(
+                "[pos_ticket_mx][cfdi] found by reference id=%s uuid=%s pos_reference=%s name=%s",
+                order.id, order.uuid, order.pos_reference, order.name,
+            )
             return order
 
         if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isdigit()):
             order = self.browse(int(identifier)).exists()
             if order:
+                _logger.warning(
+                    "[pos_ticket_mx][cfdi] found by numeric id=%s uuid=%s pos_reference=%s name=%s",
+                    order.id, order.uuid, order.pos_reference, order.name,
+                )
                 return order
 
+        _logger.warning("[pos_ticket_mx][cfdi] pos.order not found identifier=%s", identifier)
         return self.browse()
 
     # def get_qr_link(self):
@@ -71,19 +82,32 @@ class PosOrder(models.Model):
     
     @api.model
     def get_mx_cfdi_ticket_data_by_uuid(self, uuid):
-        logging.warning("get_mx_cfdi_ticket_data_by_uuid")
-        logging.warning(uuid)
+        _logger.warning("[pos_ticket_mx][cfdi] get_mx_cfdi_ticket_data_by_uuid identifier=%s", uuid)
         order = self._get_pos_order_for_cfdi_ticket(uuid)
-        logging.warning(order)
-        logging.warning(order.account_move)
+        _logger.warning(
+            "[pos_ticket_mx][cfdi] order=%s account_move=%s",
+            order.id if order else False,
+            order.account_move.id if order and order.account_move else False,
+        )
         if not order or not order.account_move:
+            _logger.warning(
+                "[pos_ticket_mx][cfdi] return empty: no order/account_move identifier=%s", uuid
+            )
             return {}
         move = order.account_move
         if not move.l10n_mx_edi_cfdi_uuid:
+            _logger.warning(
+                "[pos_ticket_mx][cfdi] return empty: move has no CFDI uuid move=%s state=%s cfdi_state=%s",
+                move.id, move.state, getattr(move, "l10n_mx_edi_cfdi_state", None),
+            )
             return {}
         cfdi_value = order.account_move._l10n_mx_edi_get_extra_invoice_report_values()
-        logging.warning(cfdi_value)
+        _logger.warning(
+            "[pos_ticket_mx][cfdi] extra invoice values keys=%s",
+            list(cfdi_value.keys()) if isinstance(cfdi_value, dict) else cfdi_value,
+        )
         if not cfdi_value:
+            _logger.warning("[pos_ticket_mx][cfdi] return empty: no extra invoice values")
             return {}
         partner = move.partner_id
         no_cert_sat = getattr(move, "l10n_mx_edi_sat_cert_number", False) or ""
@@ -106,9 +130,18 @@ class PosOrder(models.Model):
         extra_values["barcode_src"] = (
             extra_values.get("barcode_src") or self._get_mx_cfdi_barcode_src(move, cfdi_value)
         )
-        logging.warning(extra_values)
+        _logger.warning(
+            "[pos_ticket_mx][cfdi] extra common values keys=%s has_barcode=%s",
+            list(extra_values.keys()) if isinstance(extra_values, dict) else extra_values,
+            bool(extra_values.get("barcode_src")) if isinstance(extra_values, dict) else False,
+        )
         if not extra_values or not extra_values.get("barcode_src"):
+            _logger.warning("[pos_ticket_mx][cfdi] return empty: no barcode_src")
             return {}
+        _logger.warning(
+            "[pos_ticket_mx][cfdi] return data order=%s move=%s cfdi_uuid=%s invoice=%s",
+            order.id, move.id, move.l10n_mx_edi_cfdi_uuid, move.name,
+        )
         # aquí devuelves lo que quieras imprimir (uuid, fecha timbrado, certificados, cadena, etc.)
         return {
             "invoice_name": move.name or "",
