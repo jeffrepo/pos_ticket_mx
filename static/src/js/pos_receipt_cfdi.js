@@ -16,7 +16,7 @@ patch(PosOrder.prototype, {
     },
 
     isMxInvoiceOnline() {
-        return Boolean(this.mx_invoice_online);
+        return Boolean(this.mx_invoice_online || this.raw?.mx_invoice_online);
     },
 
     getOnlineInvoicePortalUrl() {
@@ -31,7 +31,7 @@ patch(PosOrder.prototype, {
 
     serializeForORM(opts = {}) {
         const data = super.serializeForORM(...arguments);
-        data.mx_invoice_online = this.mx_invoice_online || false;
+        data.mx_invoice_online = this.isMxInvoiceOnline();
         return data;
     },
 
@@ -39,10 +39,9 @@ patch(PosOrder.prototype, {
         return {
             ...super.export_for_printing(...arguments),
             mx_cfdi: this.mx_cfdi || null,
-            mx_invoice_online: this.mx_invoice_online || false,
+            mx_invoice_online: this.isMxInvoiceOnline(),
             mx_invoice_online_barcode_src: this.getOnlineInvoiceBarcodeSrc(),
             mx_invoice_online_url: this.getOnlineInvoicePortalUrl(),
         };
     },
 });
-

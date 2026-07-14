@@ -15,7 +15,30 @@ class PosOrder(models.Model):
     amount_total_words = fields.Char(string="Total en letras", default=False, copy=False)
     mx_invoice_online = fields.Boolean(string="Factura en línea", default=False, copy=False)
 
+    @api.model
+    def _load_pos_data_fields(self, config):
+        fields = super()._load_pos_data_fields(config)
+        if "mx_invoice_online" not in fields:
+            fields.append("mx_invoice_online")
+        return fields
 
+    @api.model
+    def _get_pos_order_for_cfdi_ticket(self, identifier):
+        if not identifier:
+            return self.browse()
+
+        if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isdigit()):
+            order = self.browse(int(identifier)).exists()
+            if order:
+                return order
+
+        identifier = str(identifier)
+        return self.search([
+            "|", "|",
+            ("uuid", "=", identifier),
+            ("pos_reference", "=", identifier),
+            ("name", "=", identifier),
+        ], limit=1, order="id desc")
 
     # def get_qr_link(self):
     #     self.ensure_one()
@@ -53,7 +76,7 @@ class PosOrder(models.Model):
     def get_mx_cfdi_ticket_data_by_uuid(self, uuid):
         logging.warning("get_mx_cfdi_ticket_data_by_uuid")
         logging.warning(uuid)
-        order = self.search([("uuid", "=", uuid)], limit=1)
+        order = self._get_pos_order_for_cfdi_ticket(uuid)
         logging.warning(order)
         logging.warning(order.account_move)
         if not order or not order.account_move:

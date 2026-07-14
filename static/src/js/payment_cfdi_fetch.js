@@ -12,21 +12,31 @@ async function loadMxCfdiTicketData(pos, order) {
         return;
     }
 
+    const identifiers = [
+        order.id,
+        order.server_id,
+        order.uuid,
+        order.pos_reference,
+        order.name,
+    ].filter((identifier, index, array) => identifier && array.indexOf(identifier) === index);
+
     for (let attempt = 0; attempt < 10; attempt++) {
-        try {
-            const orm = pos.env?.services?.orm;
-            const data = orm
-                ? await orm.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [order.uuid])
-                : await pos.data.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [order.uuid]);
-            if (data?.barcode_src || data?.extra_values?.barcode_src) {
-                order.mx_cfdi = data;
-                return;
+        for (const identifier of identifiers) {
+            try {
+                const orm = pos.env?.services?.orm;
+                const data = orm
+                    ? await orm.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [identifier])
+                    : await pos.data.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [identifier]);
+                if (data?.barcode_src || data?.extra_values?.barcode_src) {
+                    order.mx_cfdi = data;
+                    return;
+                }
+                if (data && Object.keys(data).length) {
+                    order.mx_cfdi = data;
+                }
+            } catch (e) {
+                // No rompas el flujo si falla obtener datos.
             }
-            if (data && Object.keys(data).length) {
-                order.mx_cfdi = data;
-            }
-        } catch (e) {
-            // No rompas el flujo si falla obtener datos.
         }
         await wait(800);
     }
