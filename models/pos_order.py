@@ -79,6 +79,28 @@ class PosOrder(models.Model):
             % (barcode_value_params, barcode_sello)
         )
         return "/report/barcode/?barcode_type=QR&value=%s&width=180&height=180" % barcode_value
+
+    def _get_mx_cfdi_amount_to_text(self, order, move):
+        amount_text = (
+            getattr(move, "amount_total_words", False)
+            or getattr(order, "amount_total_words", False)
+            or ""
+        )
+        if amount_text:
+            return amount_text
+
+        amount_to_text = getattr(move, "_l10n_mx_edi_cfdi_amount_to_text", None)
+        if amount_to_text:
+            try:
+                return amount_to_text()
+            except Exception:
+                _logger.exception("[pos_ticket_mx][cfdi] amount_to_text from CFDI helper failed")
+
+        try:
+            return move.currency_id.amount_to_text(move.amount_total).replace(",", "")
+        except Exception:
+            _logger.exception("[pos_ticket_mx][cfdi] amount_to_text from currency failed")
+            return ""
     
     @api.model
     def get_mx_cfdi_ticket_data_by_uuid(self, uuid):
@@ -112,19 +134,19 @@ class PosOrder(models.Model):
         partner = move.partner_id
         no_cert_sat = getattr(move, "l10n_mx_edi_sat_cert_number", False) or ""
         no_cert_emisor = getattr(move, "l10n_mx_edi_cfdi_cert_number", False) or ""
-        fecha_certificacion = cfdi_value["stamp_date"]
+        fecha_certificacion = cfdi_value.get("stamp_date") or ""
         # Datos “forma/metodo/uso/moneda” (ajusta a tus campos reales)
         forma_pago = getattr(move, "l10n_mx_edi_payment_method_id", False)
         metodo_pago = getattr(move, "l10n_mx_edi_payment_policy", False)
         uso_cfdi = getattr(move, "l10n_mx_edi_usage", False)
-        no_cert_emisor = cfdi_value["certificate_number"]
-        no_cert_sat = cfdi_value["certificate_sat_number"]
+        no_cert_emisor = cfdi_value.get("certificate_number") or no_cert_emisor
+        no_cert_sat = cfdi_value.get("certificate_sat_number") or no_cert_sat
         # “Cadena digital” depende de implementación; a veces está en un campo EDI o en el XML
-        cadena_digital = cfdi_value["cadena"]
-        sello_digital_cfdi = cfdi_value["sello"]
-        sello_digital_sat = cfdi_value["sello_sat"]
+        cadena_digital = cfdi_value.get("cadena") or ""
+        sello_digital_cfdi = cfdi_value.get("sello") or ""
+        sello_digital_sat = cfdi_value.get("sello_sat") or ""
         forma = ""
-        cantidad_letra = move.amount_total_words
+        cantidad_letra = self._get_mx_cfdi_amount_to_text(order, move)
         extra_values = move._l10n_mx_edi_get_extra_common_report_values()
         extra_values = extra_values if isinstance(extra_values, dict) else {}
         extra_values["barcode_src"] = (
