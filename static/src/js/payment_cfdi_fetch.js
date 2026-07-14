@@ -97,6 +97,33 @@ patch(OrderPaymentValidation.prototype, {
                 this.order?.mx_cfdi?.extra_values?.barcode_src || this.order?.mx_cfdi?.barcode_src
             ),
         });
+        try {
+            const order = this.order;
+            if (order?.isToInvoice?.() && !order.isMxInvoiceOnline?.()) {
+                const data = await this.pos.env.services.orm.call(
+                    "pos.order",
+                    "get_mx_cfdi_ticket_data_by_uuid",
+                    [order.uuid]
+                );
+                order.mx_cfdi = data || null;
+                logCfdi("afterOrderValidation cfdi loaded before print", {
+                    uuid: order.uuid,
+                    hasData: Boolean(data && Object.keys(data).length),
+                    invoiceName: data?.invoice_name,
+                    cfdiUuid: data?.uuid,
+                    hasBarcode: Boolean(data?.extra_values?.barcode_src || data?.barcode_src),
+                });
+            } else if (order) {
+                order.mx_cfdi = null;
+                logCfdi("afterOrderValidation skip cfdi load before print", {
+                    uuid: order.uuid,
+                    isToInvoice: order.isToInvoice?.(),
+                    isMxInvoiceOnline: order.isMxInvoiceOnline?.(),
+                });
+            }
+        } catch (e) {
+            logCfdi("afterOrderValidation cfdi load error before print", e);
+        }
         return await super.afterOrderValidation(...arguments);
     },
 });
