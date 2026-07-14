@@ -12,13 +12,12 @@ async function loadMxCfdiTicketData(pos, order) {
         return;
     }
 
-    for (let attempt = 0; attempt < 4; attempt++) {
+    for (let attempt = 0; attempt < 10; attempt++) {
         try {
-            const data = await pos.data.call(
-                "pos.order",
-                "get_mx_cfdi_ticket_data_by_uuid",
-                [order.uuid]
-            );
+            const orm = pos.env?.services?.orm;
+            const data = orm
+                ? await orm.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [order.uuid])
+                : await pos.data.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [order.uuid]);
             if (data?.barcode_src || data?.extra_values?.barcode_src) {
                 order.mx_cfdi = data;
                 return;
@@ -29,7 +28,7 @@ async function loadMxCfdiTicketData(pos, order) {
         } catch (e) {
             // No rompas el flujo si falla obtener datos.
         }
-        await wait(700);
+        await wait(800);
     }
 }
 
