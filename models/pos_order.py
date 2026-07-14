@@ -20,18 +20,22 @@ class PosOrder(models.Model):
         if not identifier:
             return self.browse()
 
-        if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isdigit()):
-            order = self.browse(int(identifier)).exists()
-            if order:
-                return order
-
         identifier = str(identifier)
-        return self.search([
+        order = self.search([
             "|", "|",
             ("uuid", "=", identifier),
             ("pos_reference", "=", identifier),
             ("name", "=", identifier),
         ], limit=1, order="id desc")
+        if order:
+            return order
+
+        if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isdigit()):
+            order = self.browse(int(identifier)).exists()
+            if order:
+                return order
+
+        return self.browse()
 
     # def get_qr_link(self):
     #     self.ensure_one()

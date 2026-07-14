@@ -6,7 +6,7 @@ import { patch } from "@web/core/utils/patch";
 patch(PosOrder.prototype, {
     setup(vals) {
         super.setup(...arguments);
-        this.mx_invoice_online = vals?.mx_invoice_online || this.mx_invoice_online || false;
+        this.mx_invoice_online = Boolean(vals?.mx_invoice_online);
     },
 
     setMxInvoiceOnline(value) {
@@ -16,7 +16,7 @@ patch(PosOrder.prototype, {
     },
 
     isMxInvoiceOnline() {
-        return Boolean(this.mx_invoice_online || this.raw?.mx_invoice_online);
+        return Boolean(this.mx_invoice_online);
     },
 
     getOnlineInvoicePortalUrl() {

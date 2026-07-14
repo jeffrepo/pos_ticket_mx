@@ -16,11 +16,11 @@ async function loadMxCfdiTicketData(pos, order) {
     }
 
     const identifiers = [
-        order.id,
-        order.server_id,
         order.uuid,
         order.pos_reference,
         order.name,
+        order.server_id,
+        order.id,
     ].filter((identifier, index, array) => identifier && array.indexOf(identifier) === index);
 
     for (let attempt = 0; attempt < 10; attempt++) {
