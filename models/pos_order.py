@@ -12,6 +12,7 @@ class PosOrder(models.Model):
 
     delivery_note_custom = fields.Boolean(string="Nota de remisión", default=False, copy=False, tracking=True)
     amount_total_words = fields.Char(string="Total en letras", default=False, copy=False)
+    mx_invoice_online = fields.Boolean(string="Factura en línea", default=False, copy=False)
 
 
 
@@ -77,7 +78,7 @@ class PosOrder(models.Model):
             "cliente_nombre": partner.name or "",
             "cliente_rfc": partner.vat or "",
             "cliente_domicilio": partner.contact_address or "",
-            "uuid": uuid,
+            "uuid": move.l10n_mx_edi_cfdi_uuid,
             "no_cert_sat": no_cert_sat,
             "no_cert_emisor": no_cert_emisor,
             "forma_pago_cliente": forma_pago.display_name if forma_pago else "",

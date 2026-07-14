@@ -24,6 +24,7 @@
             'pos_ticket_mx/static/src/js/pos_receipt_cfdi.js',
             'pos_ticket_mx/static/src/js/payment_cfdi_fetch.js',
             'pos_ticket_mx/static/src/xml/pos_ticket_cfdi.xml',
+            'pos_ticket_mx/static/src/xml/payment_screen.xml',
         ],
     },
     'license': 'LGPL-3',
@@ -31,4 +32,3 @@
     'installable': True,
     'auto_install': False,
 }
-
