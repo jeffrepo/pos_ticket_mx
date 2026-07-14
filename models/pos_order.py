@@ -44,6 +44,8 @@ class PosOrder(models.Model):
         if not order or not order.account_move:
             return {}
         move = order.account_move
+        if not move.l10n_mx_edi_cfdi_uuid:
+            return {}
         cfdi_value = order.account_move._l10n_mx_edi_get_extra_invoice_report_values()
         logging.warning(cfdi_value)
         if not cfdi_value:
@@ -66,7 +68,7 @@ class PosOrder(models.Model):
         cantidad_letra = move.amount_total_words
         extra_values = move._l10n_mx_edi_get_extra_common_report_values()
         logging.warning(extra_values)
-        if not move.l10n_mx_edi_cfdi_uuid:
+        if not extra_values or not extra_values.get("barcode_src"):
             return {}
         # aquí devuelves lo que quieras imprimir (uuid, fecha timbrado, certificados, cadena, etc.)
         return {
