@@ -14,7 +14,7 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['point_of_sale'],
+    'depends': ['point_of_sale', 'l10n_mx_edi'],
 
     'data': [
         #'views/templates.xml',
