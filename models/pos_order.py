@@ -16,13 +16,6 @@ class PosOrder(models.Model):
     mx_invoice_online = fields.Boolean(string="Factura en línea", default=False, copy=False)
 
     @api.model
-    def _load_pos_data_fields(self, config):
-        fields = super()._load_pos_data_fields(config)
-        if "mx_invoice_online" not in fields:
-            fields.append("mx_invoice_online")
-        return fields
-
-    @api.model
     def _get_pos_order_for_cfdi_ticket(self, identifier):
         if not identifier:
             return self.browse()
