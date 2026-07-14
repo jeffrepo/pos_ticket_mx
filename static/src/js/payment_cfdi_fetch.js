@@ -2,42 +2,6 @@
 
 import { patch } from "@web/core/utils/patch";
 import { PaymentScreen } from "@point_of_sale/app/screens/payment_screen/payment_screen";
-import { PosStore } from "@point_of_sale/app/services/pos_store";
-
-async function loadMxCfdiTicketData(pos, order) {
-    if (!order || order.isMxInvoiceOnline?.()) {
-        return;
-    }
-    if (!order.isToInvoice?.()) {
-        return;
-    }
-
-    const identifiers = [
-        order.uuid,
-        order.pos_reference,
-        order.name,
-        order.server_id,
-        order.id,
-    ].filter((identifier, index, array) => identifier && array.indexOf(identifier) === index);
-
-    for (const identifier of identifiers) {
-        try {
-            const orm = pos.env?.services?.orm;
-            const data = orm
-                ? await orm.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [identifier])
-                : await pos.data.call("pos.order", "get_mx_cfdi_ticket_data_by_uuid", [identifier]);
-            if (data?.barcode_src || data?.extra_values?.barcode_src) {
-                order.mx_cfdi = data;
-                return;
-            }
-            if (data && Object.keys(data).length) {
-                order.mx_cfdi = data;
-            }
-        } catch (e) {
-            // No rompas el flujo si falla obtener datos.
-        }
-    }
-}
 
 patch(PaymentScreen.prototype, {
     toggleMxInvoiceOnline() {
@@ -45,6 +9,7 @@ patch(PaymentScreen.prototype, {
         this.currentOrder.setMxInvoiceOnline(enableOnlineInvoice);
         if (enableOnlineInvoice && this.currentOrder.isToInvoice()) {
             this.currentOrder.setToInvoice(false);
+            this.currentOrder.mx_cfdi = null;
         }
     },
 
@@ -57,19 +22,27 @@ patch(PaymentScreen.prototype, {
         if (this.currentOrder.isToInvoice() && this.currentOrder.isMxInvoiceOnline()) {
             this.currentOrder.setMxInvoiceOnline(false);
         }
+        if (!this.currentOrder.isToInvoice()) {
+            this.currentOrder.mx_cfdi = null;
+        }
     },
 
     async _finalizeValidation() {
-        if (super._finalizeValidation) {
-            await super._finalizeValidation(...arguments);
+        await super._finalizeValidation(...arguments);
+        try {
+            const order = this.currentOrder;
+            if (!order?.isToInvoice?.() || order.isMxInvoiceOnline?.()) {
+                order.mx_cfdi = null;
+                return;
+            }
+            const data = await this.env.services.orm.call(
+                "pos.order",
+                "get_mx_cfdi_ticket_data_by_uuid",
+                [order.uuid]
+            );
+            order.mx_cfdi = data || null;
+        } catch (e) {
+            // No rompas el flujo si falla obtener datos.
         }
-        await loadMxCfdiTicketData(this.pos, this.currentOrder);
-    },
-});
-
-patch(PosStore.prototype, {
-    async printReceipt({ order = this.getOrder(), ...options } = {}) {
-        await loadMxCfdiTicketData(this, order);
-        return await super.printReceipt({ order, ...options });
     },
 });
